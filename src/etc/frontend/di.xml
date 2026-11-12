@@ -15,6 +15,11 @@
         <plugin name="pp_store_pickup_sync_pickup_address"
                 type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\Shipping\MethodList\SyncPickupAddress"/>
     </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails\KeepBillingSeparateForPickup">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
     <type name="Hyva\Checkout\Model\Component\AddressTypeShipping">
         <plugin name="pp_store_pickup_show_pickup_location_card"
                 type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Model\Component\AddressTypeShipping\ShowPickupLocationCard"/>

@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use PixelPerfect\StorePickup\Api\Data\PickupLocationInterface;
 use PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails\KeepBillingSeparateForPickup;
 use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView;
+use Psr\Log\LoggerInterface;
 
 class KeepBillingSeparateForPickupTest extends TestCase
 {
@@ -20,18 +21,49 @@ class KeepBillingSeparateForPickupTest extends TestCase
         $this->plugin = new KeepBillingSeparateForPickup($this->view);
     }
 
-    public function testPickupForcesBillingAsShippingOff(): void
+    public function testPickupNeverRunsTheOriginalAndReturnsFalse(): void
     {
         $this->view->method('getSelectedLocation')->willReturn($this->createMock(PickupLocationInterface::class));
+        $calls = 0;
+        $proceed = static function (bool $value) use (&$calls): bool {
+            $calls++;
 
-        $this->assertSame([false], $this->plugin->beforeUpdatedBillingAsShipping(new BillingDetails(), true));
+            return $value;
+        };
+
+        $this->assertFalse($this->plugin->aroundUpdatedBillingAsShipping(new BillingDetails(), $proceed, true));
+        $this->assertSame(0, $calls);
     }
 
-    public function testDeliveryKeepsTheValue(): void
+    public function testDeliveryRunsTheOriginalWithTheValueAndReturnsItsResult(): void
     {
         $this->view->method('getSelectedLocation')->willReturn(null);
+        $received = [];
+        $proceed = static function (bool $value) use (&$received): bool {
+            $received[] = $value;
 
-        $this->assertSame([true], $this->plugin->beforeUpdatedBillingAsShipping(new BillingDetails(), true));
-        $this->assertSame([false], $this->plugin->beforeUpdatedBillingAsShipping(new BillingDetails(), false));
+            return !$value;
+        };
+
+        $this->assertFalse($this->plugin->aroundUpdatedBillingAsShipping(new BillingDetails(), $proceed, true));
+        $this->assertTrue($this->plugin->aroundUpdatedBillingAsShipping(new BillingDetails(), $proceed, false));
+        $this->assertSame([true, false], $received);
+    }
+
+    public function testAFailingPickupCheckFallsBackToTheOriginal(): void
+    {
+        $this->view->method('getSelectedLocation')->willThrowException(new \RuntimeException('boom'));
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('error')->with($this->stringContains('boom'));
+        $plugin = new KeepBillingSeparateForPickup($this->view, $logger);
+        $received = [];
+        $proceed = static function (bool $value) use (&$received): bool {
+            $received[] = $value;
+
+            return $value;
+        };
+
+        $this->assertTrue($plugin->aroundUpdatedBillingAsShipping(new BillingDetails(), $proceed, true));
+        $this->assertSame([true], $received);
     }
 }

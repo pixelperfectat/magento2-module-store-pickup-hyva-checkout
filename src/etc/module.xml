@@ -4,6 +4,7 @@
     <module name="PixelPerfect_StorePickupHyvaCheckout">
         <!-- Hyva_Checkout is sequenced but only suggested in composer.json: it is a commercial package. -->
         <sequence>
+            <module name="Magento_Directory"/>
             <module name="PixelPerfect_StorePickup"/>
             <module name="Hyva_Checkout"/>
         </sequence>
