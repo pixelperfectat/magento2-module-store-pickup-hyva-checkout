@@ -3,7 +3,8 @@
 namespace PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails;
 
 use Hyva\Checkout\Magewire\Checkout\AddressView\BillingDetails;
-use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView;
+use Magento\Checkout\Model\Session as CheckoutSession;
+use PixelPerfect\StorePickup\Api\Service\PickupMethodResolverInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -18,12 +19,14 @@ class KeepBillingSeparateForPickup
     /**
      * Constructor.
      *
-     * @param PickupLocationView $view
-     * @param LoggerInterface|null $logger
+     * @param CheckoutSession $checkoutSession
+     * @param PickupMethodResolverInterface $methodResolver
+     * @param LoggerInterface $logger
      */
     public function __construct(
-        private readonly PickupLocationView $view,
-        private readonly ?LoggerInterface $logger = null
+        private readonly CheckoutSession $checkoutSession,
+        private readonly PickupMethodResolverInterface $methodResolver,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -38,11 +41,13 @@ class KeepBillingSeparateForPickup
     public function aroundUpdatedBillingAsShipping(BillingDetails $subject, callable $proceed, bool $value): bool
     {
         try {
-            if ($this->view->getSelectedLocation() !== null) {
+            // The shipping method alone decides, so a location deactivated mid-checkout cannot slip through.
+            $method = $this->checkoutSession->getQuote()->getShippingAddress()->getShippingMethod();
+            if ($this->methodResolver->isPickupMethod($method)) {
                 return false;
             }
         } catch (\Throwable $exception) {
-            $this->logger?->error(
+            $this->logger->error(
                 'Store pickup: checking the pickup quote for the billing toggle failed: ' . $exception->getMessage(),
                 ['exception' => $exception]
             );
