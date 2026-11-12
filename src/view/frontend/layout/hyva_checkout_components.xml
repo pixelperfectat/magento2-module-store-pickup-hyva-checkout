@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.shipping-details">
+            <!-- Rendered by ShowPickupLocationCard through getComponentViewBlock(), never as a plain child. -->
+            <block name="checkout.shipping-details.pp-pickup"
+                   template="PixelPerfect_StorePickupHyvaCheckout::checkout/address-view/pickup-location.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

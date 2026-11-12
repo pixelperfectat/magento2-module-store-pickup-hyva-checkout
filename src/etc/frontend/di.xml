@@ -6,8 +6,27 @@
             <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
         </arguments>
     </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
     <type name="Hyva\Checkout\Magewire\Checkout\Shipping\MethodList">
         <plugin name="pp_store_pickup_sync_pickup_address"
                 type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\Shipping\MethodList\SyncPickupAddress"/>
+    </type>
+    <type name="Hyva\Checkout\Model\Component\AddressTypeShipping">
+        <plugin name="pp_store_pickup_show_pickup_location_card"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Model\Component\AddressTypeShipping\ShowPickupLocationCard"/>
+    </type>
+    <type name="Hyva\Checkout\Magewire\Checkout\AddressView\ShippingDetails">
+        <plugin name="pp_store_pickup_add_pickup_listener"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\AddPickupListener"/>
+    </type>
+    <type name="Hyva\Checkout\Magewire\Checkout\AddressView\BillingDetails">
+        <plugin name="pp_store_pickup_add_pickup_listener"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\AddPickupListener"/>
+        <plugin name="pp_store_pickup_keep_billing_separate"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails\KeepBillingSeparateForPickup"/>
     </type>
 </config>

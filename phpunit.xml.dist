@@ -7,6 +7,7 @@
     <coverage>
         <include>
             <directory suffix=".php">src/Plugin</directory>
+            <directory suffix=".php">src/ViewModel</directory>
         </include>
     </coverage>
     <testsuites>
