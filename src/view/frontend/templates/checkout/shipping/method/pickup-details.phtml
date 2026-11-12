@@ -1,0 +1,31 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var PickupLocationView $view */
+
+$view = $block->getData('view_model');
+$location = $view->getLocation((string) $block->getData('pp_location_code'));
+if ($location === null) {
+    return;
+}
+$openingHours = trim((string) $location->getOpeningHours());
+$note = trim((string) $location->getNote());
+?>
+<div class="pp-pickup-details mt-2 space-y-1 text-sm" data-pp-pickup-details="<?= $escaper->escapeHtmlAttr($location->getCode()) ?>">
+    <address class="not-italic">
+        <?php foreach ($view->getAddressLines($location) as $line): ?>
+            <span class="block"><?= $escaper->escapeHtml($line) ?></span>
+        <?php endforeach; ?>
+    </address>
+    <?php if ($openingHours !== ''): ?>
+        <p><?= /* @noEscape */ nl2br($escaper->escapeHtml($openingHours)) ?></p>
+    <?php endif; ?>
+    <?php if ($note !== ''): ?>
+        <p><?= $escaper->escapeHtml($note) ?></p>
+    <?php endif; ?>
+</div>

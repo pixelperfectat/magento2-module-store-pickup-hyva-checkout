@@ -18,3 +18,4 @@ parameters:
         - Test/Stubs/Event.php
         - Test/Stubs/MethodList.php
         - Test/Stubs/ShippingDetails.php
+        - Test/Stubs/ViewModelMethodList.php

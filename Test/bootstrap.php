@@ -7,6 +7,10 @@ if (!class_exists(\Hyva\Checkout\Magewire\Checkout\Shipping\MethodList::class)) 
     require __DIR__ . '/Stubs/MethodList.php';
 }
 
+if (!class_exists(\Hyva\Checkout\ViewModel\Checkout\Shipping\MethodList::class)) {
+    require __DIR__ . '/Stubs/ViewModelMethodList.php';
+}
+
 if (!class_exists(\Magewirephp\Magewire\Model\Element\Event::class)) {
     require __DIR__ . '/Stubs/Event.php';
 }

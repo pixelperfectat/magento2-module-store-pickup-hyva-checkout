@@ -34,4 +34,8 @@
         <plugin name="pp_store_pickup_keep_billing_separate"
                 type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails\KeepBillingSeparateForPickup"/>
     </type>
+    <type name="Hyva\Checkout\ViewModel\Checkout\Shipping\MethodList">
+        <plugin name="pp_store_pickup_add_pickup_method_details"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Shipping\MethodList\AddPickupMethodDetails"/>
+    </type>
 </config>
