@@ -12,7 +12,7 @@
             </block>
         </referenceBlock>
         <referenceBlock name="checkout.shipping.methods">
-            <!-- Rendered under every pickup rate by AddPickupMethodDetails; Hyvä's static carrier_method alias cannot match location codes. -->
+            <!-- Rendered under the selected pickup rate by AddPickupMethodDetails; Hyvä's static carrier_method alias cannot match location codes. -->
             <block name="checkout.shipping.method.pppickup" as="pppickup"
                    template="PixelPerfect_StorePickupHyvaCheckout::checkout/shipping/method/pickup-details.phtml">
                 <arguments>

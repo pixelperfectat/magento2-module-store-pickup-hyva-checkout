@@ -8,7 +8,7 @@ use Magento\Quote\Api\Data\ShippingMethodInterface;
 use PixelPerfect\StorePickup\Api\Service\PickupMethodResolverInterface;
 
 /**
- * Shows the location details under each pickup rate of the shipping method list.
+ * Shows the location details under the selected pickup rate of the shipping method list.
  */
 class AddPickupMethodDetails
 {
