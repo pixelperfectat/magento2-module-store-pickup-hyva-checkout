@@ -56,21 +56,37 @@ class SyncPickupAddress
      */
     public function afterUpdatedMethod(MethodList $subject, string $result, string $value): string
     {
+        $quoteId = (int) $this->checkoutSession->getQuoteId();
+        if ($quoteId === 0) {
+            return $result;
+        }
+
         try {
-            $quote = $this->cartRepository->getActive((int) $this->checkoutSession->getQuoteId());
+            $quote = $this->cartRepository->getActive($quoteId);
             $before = $this->locationCode($quote);
             $this->addressApplier->sync($quote);
-
-            if ($this->locationCode($quote) !== $before) {
-                $subject->emit(self::EVENT_ADDRESS_SAVED);
-                $subject->emit(self::EVENT_PICKUP_CHANGED);
-            }
+            $changed = $this->locationCode($quote) !== $before;
         } catch (\Throwable $exception) {
             $this->logger->error(
                 'Store pickup: syncing the pickup address after the shipping method change failed: '
                 . $exception->getMessage(),
                 ['exception' => $exception]
             );
+
+            return $result;
+        }
+
+        if ($changed) {
+            try {
+                $subject->emit(self::EVENT_ADDRESS_SAVED);
+                $subject->emit(self::EVENT_PICKUP_CHANGED);
+            } catch (\Throwable $exception) {
+                $this->logger->error(
+                    'Store pickup: refreshing the checkout after the pickup location changed failed: '
+                    . $exception->getMessage(),
+                    ['exception' => $exception]
+                );
+            }
         }
 
         return $result;

@@ -6,6 +6,7 @@ use Hyva\Checkout\Magewire\Checkout\Shipping\MethodList;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
+use Magewirephp\Magewire\Model\Element\Event;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PixelPerfect\StorePickup\Api\Service\PickupAddressApplierInterface;
@@ -60,6 +61,8 @@ class SyncPickupAddressTest extends TestCase
         $this->methodList->expects($this->exactly(2))->method('emit')
             ->willReturnCallback(function (string $event) use (&$emitted) {
                 $emitted[] = $event;
+
+                return $this->createMock(Event::class);
             });
 
         $result = $this->plugin->afterUpdatedMethod($this->methodList, 'pppickup_main', 'pppickup_main');
@@ -133,6 +136,36 @@ class SyncPickupAddressTest extends TestCase
         $this->assertSame('pppickup_main', $result);
     }
 
+    public function testEmitFailureIsLoggedAsRefreshFailureAndSwallowed(): void
+    {
+        $this->quoteCodeGoes(null, 'main');
+        $failure = new \RuntimeException('bus down');
+        $this->methodList->method('emit')->willThrowException($failure);
+        $this->logger->expects($this->once())->method('error')->with(
+            'Store pickup: refreshing the checkout after the pickup location changed failed: bus down',
+            ['exception' => $failure]
+        );
+
+        $this->assertSame('x', $this->plugin->afterUpdatedMethod($this->methodList, 'x', 'x'));
+    }
+
+    public function testNoSessionQuoteReturnsEarlyWithoutLogging(): void
+    {
+        $cartRepository = $this->createMock(CartRepositoryInterface::class);
+        $cartRepository->expects($this->never())->method('getActive');
+        $session = $this->getMockBuilder(CheckoutSession::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getQuoteId'])
+            ->getMock();
+        $session->method('getQuoteId')->willReturn(null);
+        $plugin = new SyncPickupAddress($cartRepository, $session, $this->applier, $this->logger);
+        $this->applier->expects($this->never())->method('sync');
+        $this->logger->expects($this->never())->method('error');
+        $this->methodList->expects($this->never())->method('emit');
+
+        $this->assertSame('x', $plugin->afterUpdatedMethod($this->methodList, 'x', 'x'));
+    }
+
     public function testQuoteLoadFailureIsLoggedAndSwallowed(): void
     {
         $cartRepository = $this->createMock(CartRepositoryInterface::class);
@@ -141,6 +174,7 @@ class SyncPickupAddressTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getQuoteId'])
             ->getMock();
+        $session->method('getQuoteId')->willReturn(self::QUOTE_ID);
         $plugin = new SyncPickupAddress($cartRepository, $session, $this->applier, $this->logger);
         $this->logger->expects($this->once())->method('error');
         $this->methodList->expects($this->never())->method('emit');

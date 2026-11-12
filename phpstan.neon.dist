@@ -11,4 +11,5 @@ parameters:
         - '*.sync-conflict-*'
     # Hyvä Checkout is commercial and not installable in CI: analyse against a stand-in.
     scanFiles:
+        - Test/Stubs/Event.php
         - Test/Stubs/MethodList.php
