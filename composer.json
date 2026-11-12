@@ -1,0 +1,19 @@
+{
+    "name": "pixelperfectat/magento2-module-store-pickup-hyva-checkout",
+    "description": "Store pickup for Hyvä Checkout: a location card in place of the shipping address form and location details under each pickup rate",
+    "type": "magento2-module",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "PixelPerfect\\StorePickupHyvaCheckout\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}
