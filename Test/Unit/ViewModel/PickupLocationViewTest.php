@@ -110,6 +110,44 @@ class PickupLocationViewTest extends TestCase
         $this->assertSame($location, $this->viewModel->getSelectedLocation());
     }
 
+    public function testSelectedLocationIsLookedUpOncePerRequest(): void
+    {
+        $location = $this->activeLocation();
+        $this->quote('pppickup_main');
+        $this->resolver->method('getLocationCode')->willReturn('main');
+        $this->provider->expects($this->once())->method('getLocation')->willReturn($location);
+
+        $this->assertSame($location, $this->viewModel->getSelectedLocation());
+        $this->assertSame($location, $this->viewModel->getSelectedLocation());
+        $this->assertSame($location, $this->viewModel->getSelectedLocation());
+    }
+
+    public function testSelectedLocationFollowsAMethodChangeWithinTheRequest(): void
+    {
+        $main = $this->activeLocation();
+        $second = $this->activeLocation();
+        $method = 'pppickup_main';
+        $address = $this->createMock(Address::class);
+        $address->method('getShippingMethod')->willReturnCallback(static function () use (&$method) {
+            return $method;
+        });
+        $quote = $this->createMock(Quote::class);
+        $quote->method('getShippingAddress')->willReturn($address);
+        $quote->method('getStoreId')->willReturn(1);
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
+        $this->resolver->method('getLocationCode')->willReturnCallback(
+            static fn (?string $value): ?string => $value === null ? null : substr($value, 9)
+        );
+        $this->provider->expects($this->exactly(2))->method('getLocation')
+            ->willReturnMap([['main', 1, $main], ['second', 1, $second]]);
+
+        $this->assertSame($main, $this->viewModel->getSelectedLocation());
+        $method = 'pppickup_second';
+        $this->assertSame($second, $this->viewModel->getSelectedLocation());
+        $method = 'pppickup_main';
+        $this->assertSame($main, $this->viewModel->getSelectedLocation());
+    }
+
     public function testSelectedLocationIsNullForAnUnknownCode(): void
     {
         $this->quote('pppickup_gone');

@@ -18,6 +18,9 @@ use Psr\Log\LoggerInterface;
  */
 class PickupLocationView implements ArgumentInterface
 {
+    /** @var array<string, PickupLocationInterface|null> */
+    private array $selected = [];
+
     /**
      * Constructor.
      *
@@ -56,7 +59,15 @@ class PickupLocationView implements ArgumentInterface
                 return null;
             }
 
-            return $this->activeOrNull($this->locationProvider->getLocation($code, (int) $quote->getStoreId()));
+            // One provider lookup per quote, store and location within a request; a method change gets a new key.
+            $key = (int) $quote->getId() . '|' . (int) $quote->getStoreId() . '|' . $code;
+            if (!array_key_exists($key, $this->selected)) {
+                $this->selected[$key] = $this->activeOrNull(
+                    $this->locationProvider->getLocation($code, (int) $quote->getStoreId())
+                );
+            }
+
+            return $this->selected[$key];
         } catch (\Throwable $exception) {
             $this->logFailure($exception);
 
