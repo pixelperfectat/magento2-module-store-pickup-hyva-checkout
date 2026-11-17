@@ -1,6 +1,6 @@
 {
     "name": "pixelperfectat/magento2-module-store-pickup-hyva-checkout",
-    "description": "Store pickup for Hyvä Checkout: a location card in place of the shipping address form and location details under the selected pickup rate",
+    "description": "Store pickup for Hyvä Checkout: a location card in place of the shipping address form, pickup rates marked in the shipping method list, and opening hours and note under the selected pickup rate",
     "license": "MIT",
     "type": "magento2-module",
     "prefer-stable": true,

@@ -17,6 +17,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Pickup icon (map pin) on the pickup rates, shared with the payment step banner and the summary card. Configurable through the `iconPath` argument of the `PickupIcon` ViewModel.
 - Section heading "Pickup location" instead of "Shipping Address" while the pickup card is shown, flipping live with the rate.
 - "Free" instead of a zero amount on zero-priced rates in the shipping method list; switch off with the `enabled` argument of `ShowFreeShippingRates`.
-- Pickup rates recognisable in the shipping method list: a small "In-store pickup" label above the location name, or separate pickup and shipping groups. Chosen per store view in Stores > Configuration > Sales > Store Pickup > Hyvä Checkout (`label`, `groups`, or `none` for Hyvä's own list), with optional texts. List, item and group templates are overridable.
+- Pickup rates recognisable in the shipping method list: a small "In-store pickup" label above the location name, or separate pickup and shipping groups. Chosen per store view in Stores > Configuration > Sales > Store Pickup > Hyvä Checkout (`label`, `groups`, or `none` for Hyvä's own list), with optional texts. In `label` and `groups` the module renders its own list (own markup, Hyvä's Magewire/Alpine contract); list, item and group templates are overridable.
 - Translations for `en_US`, `de_DE` and `it_IT`.
 - README with requirements, installation, customising, known limits and screenshots.

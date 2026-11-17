@@ -52,10 +52,11 @@ bin/magento setup:upgrade
 
 The rate display modes:
 
-- `label`: a small, lighter line above the location name of each pickup rate.
-- `groups`: the pickup rates under one heading, then all other rates in Hyvä's order under a second one. A group
-  without rates has no heading.
-- `none`: Hyvä's own list, unchanged.
+- `label`: the module's list, with a small, lighter line above the location name of each pickup rate. Rates that are
+  not pickup rates look the same as without the module's line.
+- `groups`: the module's list, with the pickup rates under one heading and then all other rates in Hyvä's order under
+  a second one. The headings appear only when both groups have rates; otherwise the rates are listed without them.
+- `none`: Hyvä's own list template, unchanged.
 
 ![Pickup label above the pickup rates](docs/screenshots/hyva-checkout-pickup-rates-label.jpg)
 
@@ -78,7 +79,7 @@ runs in the browser beyond Hyvä's own Magewire requests.
 | Billing toggle | After-plugin on `AddressViewBilling::isVirtual` returns `true` for pickup quotes. Hyvä uses that method only to show the "same address" checkbox, so only the checkbox disappears. |
 | Invoice hint and banner | Blocks `checkout.billing-details.pp-pickup-hint` (in `checkout.billing-details.before`) and `checkout.pp-pickup-banner` (payment step of the default checkout, before the billing section). Both render nothing unless a pickup location is selected. "Change" reuses Hyvä's own navigation component; no JavaScript is added. |
 | Order summary | In the default checkout, the template of block `checkout.shipping-summary` is swapped for `checkout/shipping-summary.phtml`. For non-pickup quotes it delegates to Hyvä's own template, so delivery renders unchanged. |
-| Rate display | The template of the Magewire block `checkout.shipping.methods` is set to the module's `checkout/shipping/method-list.phtml`. While an available pickup rate is listed and the mode is not `none`, it renders the module's list through the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\MethodListView`; otherwise it renders Hyvä's `Hyva_Checkout::checkout/shipping/method-list.phtml` unchanged. |
+| Rate display | The template of the Magewire block `checkout.shipping.methods` is set to the module's `checkout/shipping/method-list.phtml`. In the modes `label` and `groups` it renders the module's list through the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\MethodListView`, estimating the rates once per render. In the mode `none` it renders Hyvä's `Hyva_Checkout::checkout/shipping/method-list.phtml` without estimating the rates itself. |
 | Details under the rate | Plugin on the ViewModel method `MethodList::getAdditionalViewBlock` returns the child block `checkout.shipping.method.pppickup` (alias `pppickup`) of `checkout.shipping.methods`. |
 
 ![Opening hours and note under the selected pickup rate](docs/screenshots/hyva-checkout-pickup-rate-details.jpg)
@@ -108,13 +109,22 @@ Override the templates in your theme, under the same module path
 The item and group templates render in the context of block `checkout.shipping.methods`, so `$magewire` and Hyvä's
 view models are available as in Hyvä's own list. Instead of overriding them in the theme, you can point the block
 arguments `pp_method_item_template` and `pp_method_group_template` of `checkout.shipping.methods` to other templates.
+A template named there that cannot be found is logged to the store pickup log, and the default template is used.
 
-The module's list replaces Hyvä's list template while a pickup rate is listed. If your theme or another module
-customises `Hyva_Checkout::checkout/shipping/method-list.phtml`, those changes do not show in the module's list (they
-still show when no pickup rate is listed). Set the rate display to `none` to keep Hyvä's template, and with it your
-customisation, at all times. The module's list keeps Hyvä's contract: the radios with `wire:model="method"`, the
-`hyvaCheckoutShippingMethodOption` Alpine component with `data-disabled`, the rate error message, the metadata icon,
-the additional view of the selected rate and the incl./excl. tax display.
+In the modes `label` and `groups` the module's list replaces Hyvä's list template, also when no pickup rate is listed.
+If your theme or another module customises `Hyva_Checkout::checkout/shipping/method-list.phtml` (a theme file
+override), those changes do not show; set the rate display to `none` to keep Hyvä's template, and with it your
+customisation. A theme or module that sets another template on `checkout.shipping.methods` through layout XML
+(`<referenceBlock name="checkout.shipping.methods" template="…"/>`) competes with this module's layout: the layout
+loaded last wins. If yours wins, the label and groups are off whatever the setting says; if this module's wins, your
+template is not used, and `none` does not bring it back (it renders Hyvä's template). In that case render the module's
+template from yours, or keep one of the two.
+
+The module's list keeps Hyvä's contract: the radios with `wire:model="method"` and value `<carrier>_<method>`, the
+`hyvaCheckoutShippingMethodOption` Alpine component with `data-disabled`, the `active`/`inactive` state class, the
+rate error message, the metadata icon, the additional view of the selected rate and the incl./excl. tax display. Its
+markup and styling are its own; `wire:key` is the full `<carrier>_<method>` value, so method codes shared by
+different carriers cannot collide.
 
 All blocks except the method list get the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView`. The layout
 is in `view/frontend/layout/`: the summary swap in `hyva_checkout_default.xml`, the banner in
