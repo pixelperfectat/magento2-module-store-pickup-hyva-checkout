@@ -59,4 +59,8 @@
             <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
         </arguments>
     </type>
+    <type name="Hyva\Checkout\ViewModel\Checkout\Formatter">
+        <plugin name="pp_store_pickup_show_free_shipping_rates"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Formatter\ShowFreeShippingRates"/>
+    </type>
 </config>

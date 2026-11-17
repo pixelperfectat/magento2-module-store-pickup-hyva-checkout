@@ -17,6 +17,7 @@ parameters:
         - Test/Stubs/Component.php
         - Test/Stubs/CountryFactory.php
         - Test/Stubs/Event.php
+        - Test/Stubs/Formatter.php
         - Test/Stubs/MethodList.php
         - Test/Stubs/ShippingDetails.php
         - Test/Stubs/ShippingMethodMetaData.php

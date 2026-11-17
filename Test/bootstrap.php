@@ -43,6 +43,10 @@ if (!class_exists(\Hyva\Checkout\Model\ShippingMethodMetaData::class)) {
     require __DIR__ . '/Stubs/ShippingMethodMetaData.php';
 }
 
+if (!class_exists(\Hyva\Checkout\ViewModel\Checkout\Formatter::class)) {
+    require __DIR__ . '/Stubs/Formatter.php';
+}
+
 // Generated factories only exist in a generated Magento installation.
 if (!class_exists(\Magento\Directory\Model\CountryFactory::class)) {
     require __DIR__ . '/Stubs/CountryFactory.php';
