@@ -15,5 +15,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Pickup card in the order summary instead of "Ship To" and "Shipping Method"; delivery quotes render Hyvä's summary unchanged.
 - Location details under the selected pickup rate.
 - Pickup icon (map pin) on the pickup rates, shared with the payment step banner and the summary card. Configurable through the `iconPath` argument of the `PickupIcon` ViewModel.
+- Section heading "Pickup location" instead of "Shipping Address" while the pickup card is shown, flipping live with the rate.
+- "Free" instead of a zero amount on zero-priced rates in the shipping method list; switch off with the `enabled` argument of `ShowFreeShippingRates`.
 - Translations for `en_US`, `de_DE` and `it_IT`.
 - README with requirements, installation, customising, known limits and screenshots.

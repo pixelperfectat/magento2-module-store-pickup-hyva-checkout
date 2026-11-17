@@ -9,7 +9,10 @@ pickup rate. The module is not released yet.
 
 - Selecting a pickup rate swaps the shipping address to the location, through the core module's address applier.
 - The shipping address form is replaced by a read-only location card while a pickup rate is selected.
+- While the card is shown, the section heading reads "Pickup location" instead of "Shipping Address", and the card
+  shows the pin icon beside the location. Switching to another rate flips the heading back without a reload.
 - The selected pickup rate shows the location details beneath it.
+- A rate that costs nothing shows "Free" instead of the zero amount; a fee still shows the amount.
 - The billing address stays the customer's own.
 - On the payment step the "same address" checkbox is hidden for pickup and a hint says the billing address is used for
   the invoice. In the default (multi-step) checkout and checkouts that inherit from it, a banner also names the pickup
@@ -97,9 +100,27 @@ The pickup rates, the payment step banner and the summary card share one icon, t
 An icon set on a pickup rate through layout metadata (block `checkout.shipping.method.pppickup_<code>`, argument
 `metadata`) wins over the default.
 
+Heading: Hyvä's "Shipping Address" title sits outside the Magewire component that re-renders on a rate switch, so it
+cannot be changed on the server. The card hides it with a small `<style>` rule (`#shipping-details:has(.pp-pickup-card)
+> legend`) and renders its own title with the same markup and classes. The rule needs a browser with `:has()`
+support; elsewhere both titles show. A strict Content Security Policy that blocks inline styles needs the rule in
+your theme CSS instead.
+
+"Free": the plugin `Plugin\ViewModel\Checkout\Formatter\ShowFreeShippingRates` adds a condition to Hyvä's price
+formatter for the shipping method list. Hyvä's conditions do not see the shipping method, so it applies to every
+zero-priced rate in the list, not only to pickup rates. To switch it off, set the `enabled` argument in your `di.xml`:
+
+```xml
+<type name="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Formatter\ShowFreeShippingRates">
+    <arguments>
+        <argument name="enabled" xsi:type="boolean">false</argument>
+    </arguments>
+</type>
+```
+
 The module registers itself for Hyvä's Tailwind build (`hyva:config:generate`), so its templates are scanned.
 
-Translations are included for `en_US`, `de_DE` and `it_IT`.
+Translations (including "Free") are included for `en_US`, `de_DE` and `it_IT`.
 
 ## Known limits
 
