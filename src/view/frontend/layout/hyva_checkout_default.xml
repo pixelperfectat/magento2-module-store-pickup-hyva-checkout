@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Pickup quotes get a pickup card; other quotes are delegated to Hyvä's own template unchanged. -->
+        <referenceBlock name="checkout.shipping-summary"
+                        template="PixelPerfect_StorePickupHyvaCheckout::checkout/shipping-summary.phtml">
+            <arguments>
+                <argument name="view_model" xsi:type="object">PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView</argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

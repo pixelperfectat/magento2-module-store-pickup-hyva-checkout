@@ -113,6 +113,29 @@ class PickupLocationView implements ArgumentInterface
     }
 
     /**
+     * Who collects the order: first and last name and telephone from the shipping address of the session quote.
+     *
+     * Blank parts are empty strings; a failing session yields two empty strings.
+     *
+     * @return array{name: string, telephone: string}
+     */
+    public function getCollector(): array
+    {
+        try {
+            $address = $this->checkoutSession->getQuote()->getShippingAddress();
+
+            return [
+                'name' => trim(trim((string) $address->getFirstname()) . ' ' . trim((string) $address->getLastname())),
+                'telephone' => trim((string) $address->getTelephone()),
+            ];
+        } catch (\Throwable $exception) {
+            $this->logFailure($exception);
+
+            return ['name' => '', 'telephone' => ''];
+        }
+    }
+
+    /**
      * Country display name; falls back to the ISO code when the directory does not know it.
      *
      * @param string $countryId

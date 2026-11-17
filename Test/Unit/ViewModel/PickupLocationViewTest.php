@@ -208,6 +208,38 @@ class PickupLocationViewTest extends TestCase
         $this->assertNull($this->viewModel->getLocation('main'));
     }
 
+    public function testCollectorIsTheShippingAddressNameAndTelephone(): void
+    {
+        $address = $this->createMock(Address::class);
+        $address->method('getFirstname')->willReturn(' Jane ');
+        $address->method('getLastname')->willReturn('Doe');
+        $address->method('getTelephone')->willReturn('+43 1 234567');
+        $quote = $this->createMock(Quote::class);
+        $quote->method('getShippingAddress')->willReturn($address);
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
+
+        $this->assertSame(['name' => 'Jane Doe', 'telephone' => '+43 1 234567'], $this->viewModel->getCollector());
+    }
+
+    public function testCollectorSkipsMissingParts(): void
+    {
+        $address = $this->createMock(Address::class);
+        $address->method('getLastname')->willReturn('Doe');
+        $quote = $this->createMock(Quote::class);
+        $quote->method('getShippingAddress')->willReturn($address);
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
+
+        $this->assertSame(['name' => 'Doe', 'telephone' => ''], $this->viewModel->getCollector());
+    }
+
+    public function testCollectorIsEmptyAndLoggedWhenTheSessionFails(): void
+    {
+        $this->checkoutSession->method('getQuote')->willThrowException(new \RuntimeException('boom'));
+        $this->logger->expects($this->once())->method('error');
+
+        $this->assertSame(['name' => '', 'telephone' => ''], $this->viewModel->getCollector());
+    }
+
     private function activeLocation(): PickupLocationInterface&MockObject
     {
         $location = $this->createMock(PickupLocationInterface::class);
