@@ -11,9 +11,10 @@ pickup rate. The module is not released yet.
 - The shipping address form is replaced by a read-only location card while a pickup rate is selected.
 - The selected pickup rate shows the location details beneath it.
 - The billing address stays the customer's own.
-- On the payment step the "same address" checkbox is hidden for pickup, a hint says the billing address is used for the
-  invoice, a banner names the pickup location (with a "Change" link back to the shipping step), and the order summary
-  shows a pickup card instead of "Ship To" and "Shipping Method".
+- On the payment step the "same address" checkbox is hidden for pickup and a hint says the billing address is used for
+  the invoice. In the default (multi-step) checkout and checkouts that inherit from it, a banner also names the pickup
+  location (with a "Change" link back to the shipping step) and the order summary shows a pickup card instead of
+  "Ship To" and "Shipping Method".
 - The payment list and the totals refresh through the events the switch emits. No JavaScript is added.
 
 ## Requirements
@@ -49,8 +50,8 @@ runs in the browser beyond Hyvä's own Magewire requests.
 | Re-render | A `pp_pickup_changed` listener is added to the shipping and billing address components through `Component::getListeners()`. Magewire reads listeners only through that method, so an after-plugin is enough; no layout or class override is needed. |
 | Billing | Around-plugin on `BillingDetails::updatedBillingAsShipping` skips Hyvä's copy of the shipping address for pickup quotes. |
 | Billing toggle | After-plugin on `AddressViewBilling::isVirtual` returns `true` for pickup quotes. Hyvä uses that method only to show the "same address" checkbox, so only the checkbox disappears. |
-| Invoice hint and banner | Blocks `checkout.billing-details.pp-pickup-hint` (in `checkout.billing-details.before`) and `checkout.pp-pickup-banner` (payment step, before the billing section). Both render nothing unless a pickup location is selected. "Change" reuses Hyvä's own navigation component; no JavaScript is added. |
-| Order summary | The template of block `checkout.shipping-summary` is swapped for `checkout/shipping-summary.phtml`. For non-pickup quotes it delegates to Hyvä's own template, so delivery renders unchanged. |
+| Invoice hint and banner | Blocks `checkout.billing-details.pp-pickup-hint` (in `checkout.billing-details.before`) and `checkout.pp-pickup-banner` (payment step of the default checkout, before the billing section). Both render nothing unless a pickup location is selected. "Change" reuses Hyvä's own navigation component; no JavaScript is added. |
+| Order summary | In the default checkout, the template of block `checkout.shipping-summary` is swapped for `checkout/shipping-summary.phtml`. For non-pickup quotes it delegates to Hyvä's own template, so delivery renders unchanged. |
 | Details under the rate | Plugin on the ViewModel method `MethodList::getAdditionalViewBlock` returns the child block `checkout.shipping.method.pppickup` (alias `pppickup`) of `checkout.shipping.methods`. |
 
 ![Location details under the selected pickup rate](docs/screenshots/hyva-checkout-pickup-rate-details.jpg)
@@ -63,26 +64,24 @@ The placed order carries the pickup location, as described in the core README.
 
 ## Customising
 
-Override the templates in your theme, under the same module path:
+Override the templates in your theme, under the same module path
+(`PixelPerfect_StorePickupHyvaCheckout::`):
 
-- `PixelPerfect_StorePickupHyvaCheckout::checkout/address-view/pickup-location.phtml` (location card, block
-  `checkout.shipping-details.pp-pickup`)
-- `PixelPerfect_StorePickupHyvaCheckout::checkout/shipping/method/pickup-details.phtml` (details under the rate,
-  block `checkout.shipping.method.pppickup`)
+- `checkout/address-view/pickup-location.phtml`: location card, block `checkout.shipping-details.pp-pickup`
+- `checkout/shipping/method/pickup-details.phtml`: details under the rate, block `checkout.shipping.method.pppickup`
+- `checkout/shipping-summary.phtml`: order summary, block `checkout.shipping-summary` (a theme that overrides that
+  block's template replaces the pickup card too)
+- `checkout/pickup-banner.phtml`: payment step banner, block `checkout.pp-pickup-banner`
+- `checkout/address-view/billing-pickup-hint.phtml`: invoice hint, block `checkout.billing-details.pp-pickup-hint`
 
-- `PixelPerfect_StorePickupHyvaCheckout::checkout/shipping-summary.phtml` (order summary, replaces the template of
-  `checkout.shipping-summary`; a theme that overrides that block's template replaces the pickup card too)
-- `PixelPerfect_StorePickupHyvaCheckout::checkout/pickup-banner.phtml` and
-  `PixelPerfect_StorePickupHyvaCheckout::checkout/address-view/billing-pickup-hint.phtml`
-
-All of these blocks get the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView`; the layout is in
-`view/frontend/layout/hyva_checkout_components.xml`.
+All of these blocks get the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView`. The layout
+is in `view/frontend/layout/`: the summary swap in `hyva_checkout_default.xml`, the banner in
+`hyva_checkout_default_payment.xml`, the rest in `hyva_checkout_components.xml`.
 
 If you offer a payment method for pickup only (see the core module's payment rules), consider naming it "Pay at
 pickup" (store view specific method title, for example `payment/cashondelivery/title`).
 
-If your theme build does not scan this module's templates, add the module to `app/etc/hyva-themes.json`; the classes
-used are standard Tailwind utilities that Hyvä Checkout already uses.
+The module registers itself for Hyvä's Tailwind build (`hyva:config:generate`), so its templates are scanned.
 
 Translations are included for `en_US`, `de_DE` and `it_IT`.
 
@@ -90,9 +89,11 @@ Translations are included for `en_US`, `de_DE` and `it_IT`.
 
 - The details appear only under the selected pickup rate, because Hyvä Checkout renders additional views for the
   selected method only.
-- The invoice hint and the banner sit outside Hyvä's billing Magewire component. They appear after a step change or
-  reload; on the one-page layout they do not follow a live switch between pickup and delivery. The hidden checkbox
-  and the order summary do.
+- The banner and the pickup summary card apply to the default (multi-step) Hyvä Checkout and checkouts that inherit
+  from it. On the one-page checkout only the hidden checkbox and the invoice hint apply, because that layout loads
+  neither `hyva_checkout_default.xml` nor `hyva_checkout_default_payment.xml`.
+- The invoice hint sits outside the billing Magewire component and does not follow a live switch between pickup and
+  delivery until the next step change or reload. The hidden checkbox does follow it.
 - Values typed into the shipping form in the last moment before a pickup rate is selected may not be restored when
   switching back (Magewire debounce).
 - Location texts are resolved for the quote's store view. A store view that shares the base URL with another one must
