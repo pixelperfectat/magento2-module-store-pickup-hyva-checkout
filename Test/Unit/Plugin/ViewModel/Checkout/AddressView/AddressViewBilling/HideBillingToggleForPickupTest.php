@@ -53,7 +53,7 @@ class HideBillingToggleForPickupTest extends TestCase
         $exception = new \RuntimeException('boom');
         $this->checkoutSession->method('getQuote')->willThrowException($exception);
         $this->logger->expects($this->exactly(2))->method('error')->with(
-            'Store pickup: checking the pickup quote for the billing toggle failed: boom',
+            'Store pickup: hiding the same-address billing toggle for a pickup quote failed: boom',
             ['exception' => $exception]
         );
 

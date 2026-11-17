@@ -46,7 +46,7 @@ class HideBillingToggleForPickup
             }
         } catch (\Throwable $exception) {
             $this->logger->error(
-                'Store pickup: checking the pickup quote for the billing toggle failed: ' . $exception->getMessage(),
+                'Store pickup: hiding the same-address billing toggle for a pickup quote failed: ' . $exception->getMessage(),
                 ['exception' => $exception]
             );
         }
