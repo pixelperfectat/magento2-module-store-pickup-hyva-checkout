@@ -216,10 +216,10 @@ class MethodListViewTest extends TestCase
             ['Vendor_Module::item.phtml', '/path/item.phtml'],
         ]);
         $this->logger->expects($this->once())->method('error')
-            ->with($this->logicalAnd(
-                $this->stringContains('Theme_Module::missing.phtml'),
-                $this->stringContains('pp_method_item_template')
-            ));
+            ->with(
+                'Store pickup: the template "Theme_Module::missing.phtml" of the block argument '
+                . '"pp_method_item_template" was not found; the default template is used.'
+            );
 
         $this->assertSame(
             '/path/item.phtml',

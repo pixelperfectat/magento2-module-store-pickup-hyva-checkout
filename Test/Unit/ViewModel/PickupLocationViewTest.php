@@ -171,7 +171,11 @@ class PickupLocationViewTest extends TestCase
     public function testSelectedLocationIsNullAndLoggedWhenTheSessionFails(): void
     {
         $this->checkoutSession->method('getQuote')->willThrowException(new \RuntimeException('boom'));
-        $this->logger->expects($this->once())->method('error');
+        $this->logger->expects($this->once())->method('error')->with(
+            'Store pickup: reading the pickup location for the checkout failed: boom',
+            $this->callback(static fn (array $context): bool => array_keys($context) === ['exception']
+                && $context['exception'] instanceof \Throwable)
+        );
 
         $this->assertNull($this->viewModel->getSelectedLocation());
     }
@@ -203,7 +207,11 @@ class PickupLocationViewTest extends TestCase
     public function testLocationByCodeIsNullAndLoggedWhenTheSessionFails(): void
     {
         $this->checkoutSession->method('getQuote')->willThrowException(new \RuntimeException('boom'));
-        $this->logger->expects($this->once())->method('error');
+        $this->logger->expects($this->once())->method('error')->with(
+            'Store pickup: reading the pickup location for the checkout failed: boom',
+            $this->callback(static fn (array $context): bool => array_keys($context) === ['exception']
+                && $context['exception'] instanceof \Throwable)
+        );
 
         $this->assertNull($this->viewModel->getLocation('main'));
     }
@@ -235,9 +243,67 @@ class PickupLocationViewTest extends TestCase
     public function testCollectorIsEmptyAndLoggedWhenTheSessionFails(): void
     {
         $this->checkoutSession->method('getQuote')->willThrowException(new \RuntimeException('boom'));
-        $this->logger->expects($this->once())->method('error');
+        $this->logger->expects($this->once())->method('error')->with(
+            'Store pickup: reading the pickup location for the checkout failed: boom',
+            $this->callback(static fn (array $context): bool => array_keys($context) === ['exception']
+                && $context['exception'] instanceof \Throwable)
+        );
 
         $this->assertSame(['name' => '', 'telephone' => ''], $this->viewModel->getCollector());
+    }
+
+    public function testAVirtualQuoteNeverAsksTheResolverOrTheProvider(): void
+    {
+        $this->quote('pppickup_main', virtual: true);
+        $this->resolver->expects($this->never())->method('getLocationCode');
+        $this->provider->expects($this->never())->method('getLocation');
+
+        $this->assertNull($this->viewModel->getSelectedLocation());
+    }
+
+    public function testAnUnknownCodeNeverAsksTheProvider(): void
+    {
+        $this->quote('pppickup_gone');
+        $this->resolver->method('getLocationCode')->willReturn(null);
+        $this->provider->expects($this->never())->method('getLocation');
+
+        $this->assertNull($this->viewModel->getSelectedLocation());
+    }
+
+    public function testTheLookupCacheKeepsQuotesAndStoresApart(): void
+    {
+        $location = $this->activeLocation();
+        $quotes = [];
+        foreach ([[5, 1], [5, 2], [6, 1], [51, 1], [5, 21]] as [$id, $store]) {
+            $address = $this->createMock(Address::class);
+            $address->method('getShippingMethod')->willReturn('pppickup_main');
+            $quote = $this->createMock(Quote::class);
+            $quote->method('isVirtual')->willReturn(false);
+            $quote->method('getShippingAddress')->willReturn($address);
+            $quote->method('getId')->willReturn($id);
+            $quote->method('getStoreId')->willReturn($store);
+            $quotes[] = $quote;
+        }
+        $this->checkoutSession->method('getQuote')->willReturnOnConsecutiveCalls(...$quotes);
+        $this->resolver->method('getLocationCode')->willReturn('main');
+        $this->provider->expects($this->exactly(5))->method('getLocation')->willReturn($location);
+
+        foreach ($quotes as $ignored) {
+            $this->viewModel->getSelectedLocation();
+        }
+    }
+
+    public function testTheCollectorPartsAreTrimmed(): void
+    {
+        $address = $this->createMock(Address::class);
+        $address->method('getFirstname')->willReturn('Jane');
+        $address->method('getLastname')->willReturn(' Doe ');
+        $address->method('getTelephone')->willReturn(' 0123456789 ');
+        $quote = $this->createMock(Quote::class);
+        $quote->method('getShippingAddress')->willReturn($address);
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
+
+        $this->assertSame(['name' => 'Jane Doe', 'telephone' => '0123456789'], $this->viewModel->getCollector());
     }
 
     private function activeLocation(): PickupLocationInterface&MockObject

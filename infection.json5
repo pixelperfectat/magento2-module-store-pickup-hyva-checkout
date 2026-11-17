@@ -3,7 +3,8 @@
     "source": {
         "directories": [
             "src/Plugin",
-            "src/Service"
+            "src/Service",
+            "src/ViewModel"
         ]
     },
     "mutators": {

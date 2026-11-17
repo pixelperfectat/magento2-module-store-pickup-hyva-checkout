@@ -94,7 +94,11 @@ class AddPickupMethodIconTest extends TestCase
     {
         $pickupIcon = $this->createMock(PickupIcon::class);
         $pickupIcon->method('getIconPath')->willThrowException(new \RuntimeException('boom'));
-        $this->logger->expects($this->once())->method('error')->with($this->stringContains('boom'));
+        $this->logger->expects($this->once())->method('error')->with(
+            'Store pickup: adding the icon to the pickup rate failed: boom',
+            $this->callback(static fn (array $context): bool => array_keys($context) === ['exception']
+                && $context['exception'] instanceof \Throwable)
+        );
         $plugin = new AddPickupMethodIcon($pickupIcon, $this->logger);
         $result = new ShippingMethodMetaData();
 

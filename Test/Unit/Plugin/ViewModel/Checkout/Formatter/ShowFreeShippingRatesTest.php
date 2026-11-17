@@ -72,7 +72,10 @@ class ShowFreeShippingRatesTest extends TestCase
 
     public function testDisabledLeavesTheConditionsUnchanged(): void
     {
-        $existing = ['other' => static fn (float $amount): float => $amount];
+        $existing = [
+            'other' => static fn (float $amount): float => $amount,
+            'second' => static fn (float $amount): float => $amount,
+        ];
 
         $this->assertSame(
             $existing,

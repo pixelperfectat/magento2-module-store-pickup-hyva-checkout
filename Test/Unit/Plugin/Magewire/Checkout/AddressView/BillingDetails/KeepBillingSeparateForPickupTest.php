@@ -74,7 +74,11 @@ class KeepBillingSeparateForPickupTest extends TestCase
     public function testAFailingPickupCheckFallsBackToTheOriginal(): void
     {
         $this->checkoutSession->method('getQuote')->willThrowException(new \RuntimeException('boom'));
-        $this->logger->expects($this->once())->method('error')->with($this->stringContains('boom'));
+        $this->logger->expects($this->once())->method('error')->with(
+            'Store pickup: checking the pickup quote for the billing toggle failed: boom',
+            $this->callback(static fn (array $context): bool => array_keys($context) === ['exception']
+                && $context['exception'] instanceof \Throwable)
+        );
         $received = [];
         $proceed = static function (bool $value) use (&$received): bool {
             $received[] = $value;

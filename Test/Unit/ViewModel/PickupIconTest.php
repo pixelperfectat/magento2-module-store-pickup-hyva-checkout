@@ -58,7 +58,11 @@ class PickupIconTest extends TestCase
     public function testAMissingIconRendersNothingAndIsLogged(): void
     {
         $this->svgIcons->method('renderHtml')->willThrowException(new NotFoundException('no such icon'));
-        $this->logger->expects($this->once())->method('warning')->with($this->stringContains('no/such'));
+        $this->logger->expects($this->once())->method('warning')->with(
+            'Store pickup: the pickup icon "no/such" could not be rendered: no such icon',
+            $this->callback(static fn (array $context): bool => array_keys($context) === ['exception']
+                && $context['exception'] instanceof \Throwable)
+        );
 
         $this->assertSame('', (new PickupIcon($this->svgIcons, $this->logger, 'no/such'))->getIconHtml('w-5'));
     }
