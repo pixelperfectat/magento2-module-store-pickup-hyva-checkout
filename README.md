@@ -123,7 +123,7 @@ template from yours, or keep one of the two.
 The module's list keeps Hyvä's contract: the radios with `wire:model="method"` and value `<carrier>_<method>`, the
 `hyvaCheckoutShippingMethodOption` Alpine component with `data-disabled`, the `active`/`inactive` state class, the
 rate error message, the metadata icon, the additional view of the selected rate and the incl./excl. tax display. Its
-markup and styling are its own; `wire:key` is the full `<carrier>_<method>` value, so method codes shared by
+markup and styling are its own; `wire:key` sits on each rate's `<li>` and is the full `<carrier>_<method>` value, so method codes shared by
 different carriers cannot collide.
 
 All blocks except the method list get the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView`. The layout
@@ -146,8 +146,9 @@ The pickup rates, the payment step banner and the summary card share one icon, t
 </type>
 ```
 
-An icon set on a pickup rate through layout metadata (block `checkout.shipping.method.pppickup_<code>`, argument
-`metadata`) wins over the default.
+An icon set on a pickup rate through layout metadata wins over the default. Hyvä finds the metadata by child alias, so
+declare a child block of `checkout.shipping.methods` with `as="pppickup_<code>"` (the block name alone is not found),
+with the argument `metadata`.
 
 Heading: Hyvä's "Shipping Address" title sits outside the Magewire component that re-renders on a rate switch, so it
 cannot be changed on the server. The card hides it visually with a small `<style>` rule
