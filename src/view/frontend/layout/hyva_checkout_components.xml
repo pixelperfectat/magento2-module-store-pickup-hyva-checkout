@@ -11,7 +11,7 @@
                 </arguments>
             </block>
         </referenceBlock>
-        <!-- Own list while a pickup rate is listed; it renders Hyvä's template otherwise (rate display "none" included). -->
+        <!-- Own list whenever the rate display is "label" or "groups"; "none" renders Hyvä's template. -->
         <referenceBlock name="checkout.shipping.methods"
                         template="PixelPerfect_StorePickupHyvaCheckout::checkout/shipping/method-list.phtml">
             <!-- Rendered under the selected pickup rate by AddPickupMethodDetails; Hyvä's static carrier_method alias cannot match location codes. -->

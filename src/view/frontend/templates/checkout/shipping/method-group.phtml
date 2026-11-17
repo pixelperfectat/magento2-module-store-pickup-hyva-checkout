@@ -27,7 +27,7 @@ $headingId = 'pp-rate-group-' . $ppGroupCode;
     <ul class="pp-shipping-rates grid grid-cols-1 gap-2">
         <?php foreach ($ppGroupMethods as $method): ?>
             <?php $block->assign('ppMethod', $method) ?>
-            <li><?= /* @noEscape */ $block->fetchView($ppItemTemplate) ?></li>
+            <li wire:key="<?= $escaper->escapeHtmlAttr($method->getCarrierCode() . '_' . $method->getMethodCode()) ?>"><?= /* @noEscape */ $block->fetchView($ppItemTemplate) ?></li>
         <?php endforeach; ?>
     </ul>
 </section>

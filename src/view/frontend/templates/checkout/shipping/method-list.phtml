@@ -69,7 +69,7 @@ $rates = $view->isGroupsMode()
                 <ul class="pp-shipping-rates grid grid-cols-1 gap-2">
                     <?php foreach ($rates as $method): ?>
                         <?php $block->assign('ppMethod', $method) ?>
-                        <li><?= /* @noEscape */ $block->fetchView($itemTemplate) ?></li>
+                        <li wire:key="<?= $escaper->escapeHtmlAttr($method->getCarrierCode() . '_' . $method->getMethodCode()) ?>"><?= /* @noEscape */ $block->fetchView($itemTemplate) ?></li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>

@@ -12,7 +12,7 @@ use PixelPerfect\StorePickupHyvaCheckout\ViewModel\MethodListView;
 /**
  * One rate card of the module's shipping method list. Rendered by method-list.phtml or method-group.phtml in the
  * context of block checkout.shipping.methods. In the rate display "label" a pickup rate gets a small line above its
- * title. The hooks Hyvä Checkout relies on: the option id, wire:key, x-data="hyvaCheckoutShippingMethodOption" with
+ * title. The hooks Hyvä Checkout relies on: the option id, x-data="hyvaCheckoutShippingMethodOption" with
  * data-disabled, the active/inactive state class, the radio (name, value <carrier>_<method>, wire:model="method",
  * x-bind:disabled), the price-including-tax/price-excluding-tax spans, the role="alert" error and the
  * shipping-method-view-<method> container of the selected rate.
@@ -50,7 +50,6 @@ $bothPricesLabel = $view->showsBothPrices()
     : '';
 ?>
 <div id="shipping-method-option-<?= $escaper->escapeHtmlAttr($code) ?>"
-     wire:key="<?= $escaper->escapeHtmlAttr($value) ?>"
      x-data="hyvaCheckoutShippingMethodOption"
      data-disabled="<?= $error === '' ? 'false' : 'true' ?>"
      class="pp-rate rounded-lg border transition-colors hover:border-primary <?= /* @noEscape */ $stateClasses ?>">
