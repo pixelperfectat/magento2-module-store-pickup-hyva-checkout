@@ -29,9 +29,16 @@ class ShowFreeShippingRatesTest extends TestCase
         return reset($added);
     }
 
+    private function freeCondition(): callable
+    {
+        $plugin = new ShowFreeShippingRates();
+
+        return $this->addedCondition($plugin->afterFilterCurrencyConditions($this->subject, []));
+    }
+
     public function testAZeroAmountInTheShippingListBecomesFree(): void
     {
-        $condition = $this->addedCondition((new ShowFreeShippingRates())->afterFilterCurrencyConditions($this->subject, []));
+        $condition = $this->freeCondition();
 
         $result = $condition(0.0, 'shipping-list-item', []);
 
@@ -41,14 +48,14 @@ class ShowFreeShippingRatesTest extends TestCase
 
     public function testAFeeKeepsItsAmount(): void
     {
-        $condition = $this->addedCondition((new ShowFreeShippingRates())->afterFilterCurrencyConditions($this->subject, []));
+        $condition = $this->freeCondition();
 
         $this->assertSame(2.5, $condition(2.5, 'shipping-list-item', []));
     }
 
     public function testAZeroAmountInAnotherAreaKeepsItsAmount(): void
     {
-        $condition = $this->addedCondition((new ShowFreeShippingRates())->afterFilterCurrencyConditions($this->subject, []));
+        $condition = $this->freeCondition();
 
         $this->assertSame(0.0, $condition(0.0, 'global', []));
     }
