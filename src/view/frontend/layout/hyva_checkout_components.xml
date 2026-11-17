@@ -20,5 +20,14 @@
                 </arguments>
             </block>
         </referenceBlock>
+        <referenceContainer name="checkout.billing-details.before">
+            <!-- Sits next to the Magewire billing component, so it follows a step change or reload, not a live pickup change. -->
+            <block name="checkout.billing-details.pp-pickup-hint" class="Magento\Framework\View\Element\Template"
+                   template="PixelPerfect_StorePickupHyvaCheckout::checkout/address-view/billing-pickup-hint.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>

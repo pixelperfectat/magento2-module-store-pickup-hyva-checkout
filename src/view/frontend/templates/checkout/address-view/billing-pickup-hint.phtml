@@ -1,0 +1,19 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var PickupLocationView $view */
+
+$view = $block->getData('view_model');
+$location = $view->getSelectedLocation();
+if ($location === null) {
+    return;
+}
+?>
+<p class="pp-pickup-billing-hint text-sm text-gray-700" data-pp-pickup-billing-hint>
+    <?= $escaper->escapeHtml(__('Used for your invoice. Your order is collected at %1.', $location->getName())) ?>
+</p>
