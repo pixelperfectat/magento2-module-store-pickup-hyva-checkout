@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
 use Hyva\Theme\Model\ViewModelRegistry;
-use Hyva\Theme\ViewModel\HeroiconsOutline;
 use Magento\Framework\Escaper;
 use Magento\Framework\View\Element\Template;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupIcon;
 use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView;
 
 /** @var Template $block */
@@ -18,8 +18,8 @@ if ($location === null) {
     echo /* @noEscape */ $block->fetchView($block->getTemplateFile('Hyva_Checkout::checkout/shipping-summary.phtml'));
     return;
 }
-/** @var HeroiconsOutline $heroicons */
-$heroicons = $viewModels->require(HeroiconsOutline::class);
+/** @var PickupIcon $pickupIcon */
+$pickupIcon = $viewModels->require(PickupIcon::class);
 $openingHours = trim((string) $location->getOpeningHours());
 $note = trim((string) $location->getNote());
 $collector = $view->getCollector();
@@ -27,7 +27,7 @@ $collector = $view->getCollector();
 <div class="pp-pickup-summary pb-6" data-pp-pickup-summary="<?= $escaper->escapeHtmlAttr($location->getCode()) ?>">
     <div class="section-title border-b border-slate-300 pb-1 mb-6">
         <h2 class="text-slate-800 text-xl font-medium flex items-center gap-2">
-            <?= /* @noEscape */ $heroicons->locationMarkerHtml('w-5 h-5', 20, 20, ['aria-hidden' => 'true']) ?>
+            <?= /* @noEscape */ $pickupIcon->getIconHtml('w-5 h-5', 20, 20) ?>
             <?= $escaper->escapeHtml(__('Pickup Location')) ?>
         </h2>
     </div>

@@ -2,9 +2,9 @@
 
 use Hyva\Checkout\ViewModel\Navigation;
 use Hyva\Theme\Model\ViewModelRegistry;
-use Hyva\Theme\ViewModel\HeroiconsOutline;
 use Magento\Framework\Escaper;
 use Magento\Framework\View\Element\Template;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupIcon;
 use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView;
 
 /** @var Template $block */
@@ -17,8 +17,8 @@ $location = $view->getSelectedLocation();
 if ($location === null) {
     return;
 }
-/** @var HeroiconsOutline $heroicons */
-$heroicons = $viewModels->require(HeroiconsOutline::class);
+/** @var PickupIcon $pickupIcon */
+$pickupIcon = $viewModels->require(PickupIcon::class);
 
 // The same route Hyvä's "Back to ..." button uses: the step before the active one.
 /** @var Navigation $navigation */
@@ -28,7 +28,7 @@ $previous = $navigator->getActiveCheckout()->getStepBefore($navigator->getActive
 $route = $previous ? $previous->getRoute() : 'shipping';
 ?>
 <div class="pp-pickup-banner flex items-center gap-3 border border-slate-300 rounded p-4 mb-6" data-pp-pickup-banner x-data="initCheckoutNavigation">
-    <?= /* @noEscape */ $heroicons->locationMarkerHtml('w-6 h-6 shrink-0', 24, 24, ['aria-hidden' => 'true']) ?>
+    <?= /* @noEscape */ $pickupIcon->getIconHtml('w-6 h-6 shrink-0', 24, 24) ?>
     <div class="grow text-sm text-slate-700">
         <strong class="block"><?= $escaper->escapeHtml(__('In-store pickup at %1', $location->getName())) ?></strong>
         <span><?= $escaper->escapeHtml(implode(', ', $view->getAddressLines($location))) ?></span>

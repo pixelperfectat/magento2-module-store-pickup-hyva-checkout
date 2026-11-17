@@ -35,6 +35,14 @@ if (!class_exists(\Hyva\Checkout\ViewModel\Checkout\AddressView\AddressViewBilli
     require __DIR__ . '/Stubs/AddressViewBilling.php';
 }
 
+if (!class_exists(\Hyva\Theme\ViewModel\SvgIcons::class)) {
+    require __DIR__ . '/Stubs/SvgIcons.php';
+}
+
+if (!class_exists(\Hyva\Checkout\Model\ShippingMethodMetaData::class)) {
+    require __DIR__ . '/Stubs/ShippingMethodMetaData.php';
+}
+
 // Generated factories only exist in a generated Magento installation.
 if (!class_exists(\Magento\Directory\Model\CountryFactory::class)) {
     require __DIR__ . '/Stubs/CountryFactory.php';

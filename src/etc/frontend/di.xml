@@ -47,4 +47,9 @@
         <plugin name="pp_store_pickup_add_pickup_method_details"
                 type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Shipping\MethodList\AddPickupMethodDetails"/>
     </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupIcon">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
 </config>
