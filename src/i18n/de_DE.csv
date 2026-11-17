@@ -10,7 +10,7 @@
 "Shipping","Versand"
 "Hyvä Checkout","Hyvä Checkout"
 "Pickup Rates in the Shipping Method List","Abholraten in der Versandartenliste"
-"How the pickup rates stand out from the other shipping rates. ""None"" keeps Hyvä's own list.","Wie sich die Abholraten von den übrigen Versandarten abheben. ""Keine"" behält Hyväs eigene Liste."
+"How the pickup rates stand out from the other shipping rates. ""Label"" and ""Groups"" render this module's own shipping method list, so a theme override of Hyvä's checkout/shipping/method-list.phtml has no effect; customise this module's templates instead. ""None"" keeps Hyvä's own list.","Wie sich die Abholraten von den anderen Versandarten abheben. „Hinweis“ und „Getrennte Gruppen“ verwenden die eigene Versandartenliste dieses Moduls; ein Theme-Override von Hyvä's checkout/shipping/method-list.phtml greift dann nicht, passen Sie stattdessen die Templates dieses Moduls an. „Keine“ behält Hyvä's eigene Liste."
 "Label above the pickup rates","Hinweis über den Abholraten"
 "Separate groups for pickup and shipping","Getrennte Gruppen für Abholung und Versand"
 "None (Hyvä default list)","Keine (Hyvä-Standardliste)"

@@ -10,7 +10,7 @@
 "Shipping","Shipping"
 "Hyvä Checkout","Hyvä Checkout"
 "Pickup Rates in the Shipping Method List","Pickup Rates in the Shipping Method List"
-"How the pickup rates stand out from the other shipping rates. ""None"" keeps Hyvä's own list.","How the pickup rates stand out from the other shipping rates. ""None"" keeps Hyvä's own list."
+"How the pickup rates stand out from the other shipping rates. ""Label"" and ""Groups"" render this module's own shipping method list, so a theme override of Hyvä's checkout/shipping/method-list.phtml has no effect; customise this module's templates instead. ""None"" keeps Hyvä's own list.","How the pickup rates stand out from the other shipping rates. ""Label"" and ""Groups"" render this module's own shipping method list, so a theme override of Hyvä's checkout/shipping/method-list.phtml has no effect; customise this module's templates instead. ""None"" keeps Hyvä's own list."
 "Label above the pickup rates","Label above the pickup rates"
 "Separate groups for pickup and shipping","Separate groups for pickup and shipping"
 "None (Hyvä default list)","None (Hyvä default list)"

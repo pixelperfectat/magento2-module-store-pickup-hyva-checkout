@@ -10,7 +10,7 @@
 "Shipping","Spedizione"
 "Hyvä Checkout","Hyvä Checkout"
 "Pickup Rates in the Shipping Method List","Tariffe di ritiro nell'elenco dei metodi di spedizione"
-"How the pickup rates stand out from the other shipping rates. ""None"" keeps Hyvä's own list.","Come le tariffe di ritiro si distinguono dalle altre tariffe di spedizione. ""Nessuna"" mantiene l'elenco di Hyvä."
+"How the pickup rates stand out from the other shipping rates. ""Label"" and ""Groups"" render this module's own shipping method list, so a theme override of Hyvä's checkout/shipping/method-list.phtml has no effect; customise this module's templates instead. ""None"" keeps Hyvä's own list.","Come le tariffe di ritiro si distinguono dalle altre spedizioni. „Etichetta“ e „Gruppi separati“ usano l'elenco dei metodi di spedizione di questo modulo, quindi un override del tema di checkout/shipping/method-list.phtml di Hyvä non ha effetto; personalizza invece i template di questo modulo. „Nessuna“ mantiene l'elenco di Hyvä."
 "Label above the pickup rates","Etichetta sopra le tariffe di ritiro"
 "Separate groups for pickup and shipping","Gruppi separati per ritiro e spedizione"
 "None (Hyvä default list)","Nessuna (elenco predefinito di Hyvä)"

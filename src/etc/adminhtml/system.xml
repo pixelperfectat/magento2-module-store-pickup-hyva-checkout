@@ -10,7 +10,7 @@
                 <field id="rate_display" translate="label comment" type="select" sortOrder="10"
                        showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Pickup Rates in the Shipping Method List</label>
-                    <comment>How the pickup rates stand out from the other shipping rates. "None" keeps Hyvä's own list.</comment>
+                    <comment>How the pickup rates stand out from the other shipping rates. "Label" and "Groups" render this module's own shipping method list, so a theme override of Hyvä's checkout/shipping/method-list.phtml has no effect; customise this module's templates instead. "None" keeps Hyvä's own list.</comment>
                     <source_model>PixelPerfect\StorePickupHyvaCheckout\Model\Config\Source\RateDisplay</source_model>
                 </field>
                 <field id="rate_label" translate="label comment" type="text" sortOrder="20"
