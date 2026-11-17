@@ -2,6 +2,7 @@
 
 namespace Hyva\Checkout\ViewModel\Checkout\Shipping;
 
+use Hyva\Checkout\Model\ShippingMethodMetaData;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Template;
 use Magento\Quote\Api\Data\ShippingMethodInterface;
@@ -32,5 +33,15 @@ class MethodList
         $search = $this->getAdditionalViewBlock($block, $method);
 
         return $search && $search->getTemplate();
+    }
+
+    /**
+     * @param Template $parent
+     * @param ShippingMethodInterface $method
+     * @return ShippingMethodMetaData
+     */
+    public function getMethodMetaData(Template $parent, ShippingMethodInterface $method): ShippingMethodMetaData
+    {
+        return new ShippingMethodMetaData();
     }
 }

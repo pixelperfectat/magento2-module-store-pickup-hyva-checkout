@@ -14,5 +14,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Pickup banner above the billing address with a "Change" link back to the shipping step.
 - Pickup card in the order summary instead of "Ship To" and "Shipping Method"; delivery quotes render Hyvä's summary unchanged.
 - Location details under the selected pickup rate.
+- Pickup icon (map pin) on the pickup rates, shared with the payment step banner and the summary card. Configurable through the `iconPath` argument of the `PickupIcon` ViewModel.
 - Translations for `en_US`, `de_DE` and `it_IT`.
 - README with requirements, installation, customising, known limits and screenshots.

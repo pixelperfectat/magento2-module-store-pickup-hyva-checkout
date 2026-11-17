@@ -81,6 +81,22 @@ is in `view/frontend/layout/`: the summary swap in `hyva_checkout_default.xml`, 
 If you offer a payment method for pickup only (see the core module's payment rules), consider naming it "Pay at
 pickup" (store view specific method title, for example `payment/cashondelivery/title`).
 
+The pickup rates, the payment step banner and the summary card share one icon, the ViewModel
+`PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupIcon`. The default is Hyvä's `heroicons/outline/location-marker`
+(a map pin). To use another icon, set the `iconPath` argument in your `di.xml`; the path has the format of Hyvä's
+`SvgIcons` (icon set and name, without `.svg`):
+
+```xml
+<type name="PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupIcon">
+    <arguments>
+        <argument name="iconPath" xsi:type="string">heroicons/outline/home</argument>
+    </arguments>
+</type>
+```
+
+An icon set on a pickup rate through layout metadata (block `checkout.shipping.method.pppickup_<code>`, argument
+`metadata`) wins over the default.
+
 The module registers itself for Hyvä's Tailwind build (`hyva:config:generate`), so its templates are scanned.
 
 Translations are included for `en_US`, `de_DE` and `it_IT`.
