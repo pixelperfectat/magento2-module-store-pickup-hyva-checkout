@@ -31,6 +31,10 @@ if (!class_exists(\Hyva\Checkout\Magewire\Checkout\AddressView\BillingDetails::c
     require __DIR__ . '/Stubs/BillingDetails.php';
 }
 
+if (!class_exists(\Hyva\Checkout\ViewModel\Checkout\AddressView\AddressViewBilling::class)) {
+    require __DIR__ . '/Stubs/AddressViewBilling.php';
+}
+
 // Generated factories only exist in a generated Magento installation.
 if (!class_exists(\Magento\Directory\Model\CountryFactory::class)) {
     require __DIR__ . '/Stubs/CountryFactory.php';

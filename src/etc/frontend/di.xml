@@ -34,6 +34,15 @@
         <plugin name="pp_store_pickup_keep_billing_separate"
                 type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails\KeepBillingSeparateForPickup"/>
     </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\AddressView\AddressViewBilling\HideBillingToggleForPickup">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Hyva\Checkout\ViewModel\Checkout\AddressView\AddressViewBilling">
+        <plugin name="pp_store_pickup_hide_billing_toggle"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\AddressView\AddressViewBilling\HideBillingToggleForPickup"/>
+    </type>
     <type name="Hyva\Checkout\ViewModel\Checkout\Shipping\MethodList">
         <plugin name="pp_store_pickup_add_pickup_method_details"
                 type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Shipping\MethodList\AddPickupMethodDetails"/>

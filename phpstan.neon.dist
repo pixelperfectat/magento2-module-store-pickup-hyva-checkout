@@ -12,6 +12,7 @@ parameters:
     # Hyvä Checkout is commercial and not installable in CI: analyse against a stand-in.
     scanFiles:
         - Test/Stubs/AddressTypeShipping.php
+        - Test/Stubs/AddressViewBilling.php
         - Test/Stubs/BillingDetails.php
         - Test/Stubs/Component.php
         - Test/Stubs/CountryFactory.php
