@@ -2,8 +2,8 @@
 
 Hyvä Checkout companion for
 [`pixelperfectat/magento2-module-store-pickup`](https://github.com/pixelperfectat/magento2-module-store-pickup).
-It shows the chosen pickup location in place of the shipping address form and the location details under the selected
-pickup rate. The module is not released yet.
+It shows the chosen pickup location in place of the shipping address form, marks the pickup rates in the shipping method
+list and shows the opening hours and note under the selected pickup rate. The module is not released yet.
 
 ![Pickup location card in the Hyvä Checkout shipping step](docs/screenshots/hyva-checkout-pickup-card.jpg)
 
@@ -11,7 +11,10 @@ pickup rate. The module is not released yet.
 - The shipping address form is replaced by a read-only location card while a pickup rate is selected.
 - While the card is shown, the section heading reads "Pickup location" instead of "Shipping Address", and the card
   shows the pin icon beside the location. Switching to another rate flips the heading back without a reload.
-- The selected pickup rate shows the location details beneath it.
+- Pickup rates are recognisable in the shipping method list: a small "In-store pickup" line above the location name,
+  or separate "In-store pickup" and "Shipping" groups, chosen in the configuration.
+- The selected pickup rate shows the location's opening hours and note beneath it (the address is already on the card
+  above). A location with neither shows nothing there.
 - A rate that costs nothing shows "Free" instead of the zero amount; a fee still shows the amount.
 - The billing address stays the customer's own.
 - On the payment step the "same address" checkbox is hidden for pickup and a hint says the billing address is used for
@@ -38,8 +41,28 @@ bin/magento setup:upgrade
 
 ## Configuration
 
-There is no configuration of its own. Pickup locations, texts and payment rules are configured in the core module; see
-its [README](https://github.com/pixelperfectat/magento2-module-store-pickup#configuration).
+**Stores > Configuration > Sales > Store Pickup > Hyvä Checkout**, all settings per store view:
+
+| Setting | Path | Default |
+|---|---|---|
+| Pickup Rates in the Shipping Method List | `pp_store_pickup/hyva_checkout/rate_display` | `label` |
+| Pickup Rate Label (label mode) | `pp_store_pickup/hyva_checkout/rate_label` | empty = "In-store pickup", translated |
+| Pickup Group Title (groups mode) | `pp_store_pickup/hyva_checkout/group_pickup_title` | empty = "In-store pickup", translated |
+| Shipping Group Title (groups mode) | `pp_store_pickup/hyva_checkout/group_shipping_title` | empty = "Shipping", translated |
+
+The rate display modes:
+
+- `label`: a small, lighter line above the location name of each pickup rate.
+- `groups`: the pickup rates under one heading, then all other rates in Hyvä's order under a second one. A group
+  without rates has no heading.
+- `none`: Hyvä's own list, unchanged.
+
+![Pickup label above the pickup rates](docs/screenshots/hyva-checkout-pickup-rates-label.jpg)
+
+![Pickup and shipping groups](docs/screenshots/hyva-checkout-pickup-rates-groups.jpg)
+
+Pickup locations, texts and payment rules are configured in the core module; see its
+[README](https://github.com/pixelperfectat/magento2-module-store-pickup#configuration).
 
 ## How it works
 
@@ -55,9 +78,10 @@ runs in the browser beyond Hyvä's own Magewire requests.
 | Billing toggle | After-plugin on `AddressViewBilling::isVirtual` returns `true` for pickup quotes. Hyvä uses that method only to show the "same address" checkbox, so only the checkbox disappears. |
 | Invoice hint and banner | Blocks `checkout.billing-details.pp-pickup-hint` (in `checkout.billing-details.before`) and `checkout.pp-pickup-banner` (payment step of the default checkout, before the billing section). Both render nothing unless a pickup location is selected. "Change" reuses Hyvä's own navigation component; no JavaScript is added. |
 | Order summary | In the default checkout, the template of block `checkout.shipping-summary` is swapped for `checkout/shipping-summary.phtml`. For non-pickup quotes it delegates to Hyvä's own template, so delivery renders unchanged. |
+| Rate display | The template of the Magewire block `checkout.shipping.methods` is set to the module's `checkout/shipping/method-list.phtml`. While an available pickup rate is listed and the mode is not `none`, it renders the module's list through the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\MethodListView`; otherwise it renders Hyvä's `Hyva_Checkout::checkout/shipping/method-list.phtml` unchanged. |
 | Details under the rate | Plugin on the ViewModel method `MethodList::getAdditionalViewBlock` returns the child block `checkout.shipping.method.pppickup` (alias `pppickup`) of `checkout.shipping.methods`. |
 
-![Location details under the selected pickup rate](docs/screenshots/hyva-checkout-pickup-rate-details.jpg)
+![Opening hours and note under the selected pickup rate](docs/screenshots/hyva-checkout-pickup-rate-details.jpg)
 
 ![Pickup banner, billing address and pickup card on the payment step](docs/screenshots/hyva-checkout-pickup-payment-step.jpg)
 
@@ -71,13 +95,28 @@ Override the templates in your theme, under the same module path
 (`PixelPerfect_StorePickupHyvaCheckout::`):
 
 - `checkout/address-view/pickup-location.phtml`: location card, block `checkout.shipping-details.pp-pickup`
-- `checkout/shipping/method/pickup-details.phtml`: details under the rate, block `checkout.shipping.method.pppickup`
+- `checkout/shipping/method/pickup-details.phtml`: opening hours and note under the rate, block
+  `checkout.shipping.method.pppickup`
+- `checkout/shipping/method-list.phtml`: the shipping method list, block `checkout.shipping.methods`
+- `checkout/shipping/method-item.phtml`: one rate of the module's list, including the pickup label
+- `checkout/shipping/method-group.phtml`: one group (heading and rates) in the groups mode
 - `checkout/shipping-summary.phtml`: order summary, block `checkout.shipping-summary` (a theme that overrides that
   block's template replaces the pickup card too)
 - `checkout/pickup-banner.phtml`: payment step banner, block `checkout.pp-pickup-banner`
 - `checkout/address-view/billing-pickup-hint.phtml`: invoice hint, block `checkout.billing-details.pp-pickup-hint`
 
-All of these blocks get the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView`. The layout
+The item and group templates render in the context of block `checkout.shipping.methods`, so `$magewire` and Hyvä's
+view models are available as in Hyvä's own list. Instead of overriding them in the theme, you can point the block
+arguments `pp_method_item_template` and `pp_method_group_template` of `checkout.shipping.methods` to other templates.
+
+The module's list replaces Hyvä's list template while a pickup rate is listed. If your theme or another module
+customises `Hyva_Checkout::checkout/shipping/method-list.phtml`, those changes do not show in the module's list (they
+still show when no pickup rate is listed). Set the rate display to `none` to keep Hyvä's template, and with it your
+customisation, at all times. The module's list keeps Hyvä's contract: the radios with `wire:model="method"`, the
+`hyvaCheckoutShippingMethodOption` Alpine component with `data-disabled`, the rate error message, the metadata icon,
+the additional view of the selected rate and the incl./excl. tax display.
+
+All blocks except the method list get the ViewModel `PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView`. The layout
 is in `view/frontend/layout/`: the summary swap in `hyva_checkout_default.xml`, the banner in
 `hyva_checkout_default_payment.xml`, the rest in `hyva_checkout_components.xml`.
 
@@ -101,8 +140,9 @@ An icon set on a pickup rate through layout metadata (block `checkout.shipping.m
 `metadata`) wins over the default.
 
 Heading: Hyvä's "Shipping Address" title sits outside the Magewire component that re-renders on a rate switch, so it
-cannot be changed on the server. The card hides it with a small `<style>` rule (`#shipping-details:has(.pp-pickup-card)
-> legend`) and renders its own title with the same markup and classes. The rule needs a browser with `:has()`
+cannot be changed on the server. The card hides it visually with a small `<style>` rule
+(`#shipping-details:has(.pp-pickup-card) > legend`, the usual screen-reader-only pattern, so the fieldset keeps its
+accessible name) and renders its own title with the same markup and classes. The rule needs a browser with `:has()`
 support; elsewhere both titles show. A strict Content Security Policy that blocks inline styles needs the rule in
 your theme CSS instead.
 
@@ -124,7 +164,7 @@ Translations (including "Free") are included for `en_US`, `de_DE` and `it_IT`.
 
 ## Known limits
 
-- The details appear only under the selected pickup rate, because Hyvä Checkout renders additional views for the
+- The opening hours and note appear only under the selected pickup rate, because Hyvä Checkout renders additional views for the
   selected method only.
 - The banner and the pickup summary card apply to the default (multi-step) Hyvä Checkout and checkouts that inherit
   from it. On the one-page checkout only the hidden checkbox and the invoice hint apply, because that layout loads

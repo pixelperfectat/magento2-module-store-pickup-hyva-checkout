@@ -15,13 +15,13 @@ if ($location === null) {
 }
 $openingHours = trim((string) $location->getOpeningHours());
 $note = trim((string) $location->getNote());
+// The pickup card above already shows the address. Without hours or a note this renders nothing at all, so the
+// method list (Hyvä's included) leaves out the details container.
+if ($openingHours === '' && $note === '') {
+    return;
+}
 ?>
 <div class="pp-pickup-details mt-2 space-y-1 text-sm" data-pp-pickup-details="<?= $escaper->escapeHtmlAttr($location->getCode()) ?>">
-    <address class="not-italic">
-        <?php foreach ($view->getAddressLines($location) as $line): ?>
-            <span class="block"><?= $escaper->escapeHtml($line) ?></span>
-        <?php endforeach; ?>
-    </address>
     <?php if ($openingHours !== ''): ?>
         <p><?= /* @noEscape */ nl2br($escaper->escapeHtml($openingHours)) ?></p>
     <?php endif; ?>

@@ -23,8 +23,9 @@ $openingHours = trim((string) $location->getOpeningHours());
 $note = trim((string) $location->getNote());
 ?>
 <?php /* Hyvä's own section title ("Shipping Address") sits outside the Magewire component, so it cannot change on a live
-         rate switch; it is hidden while this card is rendered and the card brings the matching title instead. */ ?>
-<style>#shipping-details:has(.pp-pickup-card) > legend { display: none; }</style>
+         rate switch; while this card is rendered it is hidden visually only (so the fieldset keeps its accessible
+         name) and the card brings the matching visible title instead. */ ?>
+<style>#shipping-details:has(.pp-pickup-card) > legend { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }</style>
 <div class="pp-pickup-card" data-pp-pickup-location="<?= $escaper->escapeHtmlAttr($location->getCode()) ?>">
     <div class="section-title w-full border-b border-slate-300 pb-2 mb-6">
         <h2 class="text-slate-800 text-xl font-medium"><?= $escaper->escapeHtml(__('Pickup location')) ?></h2>

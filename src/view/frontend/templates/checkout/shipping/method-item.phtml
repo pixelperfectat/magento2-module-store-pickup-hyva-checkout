@@ -1,0 +1,112 @@
+<?php declare(strict_types=1);
+
+use Hyva\Checkout\Magewire\Checkout\Shipping\MethodList as Magewire;
+use Hyva\Checkout\ViewModel\Checkout\Formatter;
+use Hyva\Checkout\ViewModel\Checkout\Shipping\MethodList;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Quote\Api\Data\ShippingMethodInterface;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\MethodListView;
+
+/**
+ * One rate card of the module's shipping method list. Rendered by method-list.phtml or method-group.phtml in the
+ * context of block checkout.shipping.methods. In the rate display "label" a pickup rate gets a small line above its
+ * title. The hooks Hyvä Checkout relies on: the option id, wire:key, x-data="hyvaCheckoutShippingMethodOption" with
+ * data-disabled, the active/inactive state class, the radio (name, value <carrier>_<method>, wire:model="method",
+ * x-bind:disabled), the price-including-tax/price-excluding-tax spans, the role="alert" error and the
+ * shipping-method-view-<method> container of the selected rate.
+ */
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var Magewire $magewire */
+/** @var ShippingMethodInterface $ppMethod */
+
+/** @var MethodList $viewModel */
+$viewModel = $viewModels->require(MethodList::class);
+/** @var Formatter $formatter */
+$formatter = $viewModels->require(Formatter::class);
+/** @var MethodListView $view */
+$view = $viewModels->require(MethodListView::class);
+
+$rate = $ppMethod;
+$code = (string) $rate->getMethodCode();
+$value = $rate->getCarrierCode() . '_' . $code;
+$radioId = 'shipping-method-' . $code;
+$selected = $magewire->method === $value;
+$error = (string) $rate->getErrorMessage();
+$pickupLine = !$view->isGroupsMode() && $view->isPickupRate($rate) ? $view->getRateLabel() : '';
+$meta = $viewModel->getMethodMetaData($block, $rate);
+$icon = $meta->canRenderIcon() ? (string) $meta->renderIcon() : '';
+$extraView = '';
+if ($viewModel->isCurrentShippingMethod($rate, $magewire->method) && $viewModel->hasAdditionalView($block, $rate)) {
+    $extraView = trim((string) $viewModel->getAdditionalViewBlock($block, $rate)->toHtml());
+}
+$stateClasses = $selected ? 'active border-primary bg-gray-50 shadow-sm' : 'inactive border-gray-300 bg-white';
+$bothPricesLabel = $view->showsBothPrices()
+    ? ' data-label="' . $escaper->escapeHtmlAttr(__('Excl. Tax')) . '"'
+    : '';
+?>
+<div id="shipping-method-option-<?= $escaper->escapeHtmlAttr($code) ?>"
+     wire:key="<?= $escaper->escapeHtmlAttr($value) ?>"
+     x-data="hyvaCheckoutShippingMethodOption"
+     data-disabled="<?= $error === '' ? 'false' : 'true' ?>"
+     class="pp-rate rounded-lg border transition-colors hover:border-primary <?= /* @noEscape */ $stateClasses ?>">
+    <div class="flex items-start gap-3 px-4 py-3">
+        <input type="radio"
+               id="<?= $escaper->escapeHtmlAttr($radioId) ?>"
+               name="shipping-method-option"
+               value="<?= $escaper->escapeHtmlAttr($value) ?>"
+               class="form-radio mt-1 shrink-0"
+               wire:model="method"
+               x-bind:disabled="disabled">
+        <label for="<?= $escaper->escapeHtmlAttr($radioId) ?>"
+               class="flex flex-1 min-w-0 items-center gap-3 cursor-pointer select-none mb-0">
+            <span class="pp-rate-text flex flex-1 min-w-0 flex-col">
+                <?php if ($pickupLine !== ''): ?>
+                    <span class="pp-rate-label text-xs text-gray-500"><?= $escaper->escapeHtml($pickupLine) ?></span>
+                <?php endif; ?>
+                <span class="pp-rate-title text-base font-medium text-gray-900">
+                    <?= $escaper->escapeHtml($viewModel->getMethodTitle($rate)) ?>
+                </span>
+                <span class="pp-rate-price price-box text-sm font-semibold text-gray-800">
+                    <?php if ($view->showsPriceInclTax()): ?>
+                        <span class="price-including-tax block"
+                              data-label="<?= $escaper->escapeHtmlAttr(__('Incl. Tax')) ?>">
+                            <span class="price"><?= /* @noEscape */ $formatter->currencyWithLabelingConditions(
+                                $rate->getPriceInclTax(),
+                                'shipping-list-item'
+                            ) ?></span>
+                        </span>
+                    <?php endif; ?>
+                    <?php if ($view->showsPriceExclTax($rate)): ?>
+                        <span class="price-excluding-tax block"<?= /* @noEscape */ $bothPricesLabel ?>>
+                            <span class="price"><?= /* @noEscape */ $formatter->currencyWithLabelingConditions(
+                                $rate->getPriceExclTax(),
+                                'shipping-list-item'
+                            ) ?></span>
+                        </span>
+                    <?php endif; ?>
+                </span>
+            </span>
+            <?php if ($icon !== ''): ?>
+                <span class="pp-rate-icon shrink-0"><?= /* @noEscape */ $icon ?></span>
+            <?php endif; ?>
+        </label>
+    </div>
+    <?php if ($error !== '' || $extraView !== ''): ?>
+        <div class="pp-rate-extra space-y-3 px-4 pb-4">
+            <?php if ($error !== ''): ?>
+                <p role="alert" class="message error mb-0 text-sm"><?= $escaper->escapeHtml(__($error)) ?></p>
+            <?php endif; ?>
+            <?php if ($extraView !== ''): ?>
+                <div id="shipping-method-view-<?= $escaper->escapeHtmlAttr($code) ?>"
+                     class="pp-rate-details border-t border-gray-200 pt-3">
+                    <?= /* @noEscape */ $extraView ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+</div>
