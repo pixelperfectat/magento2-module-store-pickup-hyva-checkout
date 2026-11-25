@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="PixelPerfect\StorePickupHyvaCheckout\Api\Service\RateDisplayConfigInterface"
+                type="PixelPerfect\StorePickupHyvaCheckout\Service\RateDisplayConfig"/>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\Observer\RegisterModuleForHyvaConfig">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+</config>

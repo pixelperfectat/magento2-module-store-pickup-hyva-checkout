@@ -1,0 +1,78 @@
+<?php declare(strict_types=1);
+
+use Hyva\Checkout\ViewModel\Checkout\Shipping\MethodList;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\MethodListView;
+
+/**
+ * Shipping method list of block checkout.shipping.methods (Magewire component).
+ *
+ * The rate display "none" hands over to Hyvä's own template before any rate is estimated. The "label" and "groups"
+ * modes render the module's list: each rate through method-item.phtml, in the groups mode with a heading per group
+ * (method-group.phtml) when both groups have rates. Item and group render in the context of this block, so $magewire
+ * and the Hyvä view models work as in Hyvä's list. The block arguments pp_method_item_template and
+ * pp_method_group_template name other templates.
+ */
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+
+/** @var MethodListView $view */
+$view = $viewModels->require(MethodListView::class);
+
+if (!$view->usesOwnList()) {
+    echo /* @noEscape */ $block->fetchView($block->getTemplateFile('Hyva_Checkout::checkout/shipping/method-list.phtml'));
+    return;
+}
+
+/** @var MethodList $viewModel */
+$viewModel = $viewModels->require(MethodList::class);
+$methods = $viewModel->getList();
+$itemTemplate = $view->getTemplateFile(
+    $block,
+    'pp_method_item_template',
+    'PixelPerfect_StorePickupHyvaCheckout::checkout/shipping/method-item.phtml'
+);
+$groups = [];
+if ($view->showsGroupHeadings($methods)) {
+    $groupTemplate = $view->getTemplateFile(
+        $block,
+        'pp_method_group_template',
+        'PixelPerfect_StorePickupHyvaCheckout::checkout/shipping/method-group.phtml'
+    );
+    $groups = [
+        'pickup' => [$view->getPickupGroupTitle(), $view->getPickupRates($methods)],
+        'shipping' => [$view->getShippingGroupTitle(), $view->getOtherRates($methods)],
+    ];
+}
+$rates = $view->isGroupsMode()
+    ? array_merge($view->getPickupRates($methods), $view->getOtherRates($methods))
+    : $view->getAvailableRates($methods);
+?>
+<div id="shipping-methods" data-pp-rate-display="<?= $escaper->escapeHtmlAttr($view->getMode()) ?>">
+    <?php if ($rates): ?>
+        <div id="shipping-method-list" class="grid grid-cols-1 gap-4">
+            <?php if ($groups): ?>
+                <?php foreach ($groups as $groupCode => [$groupTitle, $groupMethods]): ?>
+                    <?php $block->assign([
+                        'ppGroupCode' => $groupCode,
+                        'ppGroupTitle' => $groupTitle,
+                        'ppGroupMethods' => $groupMethods,
+                        'ppItemTemplate' => $itemTemplate,
+                    ]) ?>
+                    <?= /* @noEscape */ $block->fetchView($groupTemplate) ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <ul class="pp-shipping-rates grid grid-cols-1 gap-2">
+                    <?php foreach ($rates as $method): ?>
+                        <?php $block->assign('ppMethod', $method) ?>
+                        <li wire:key="<?= $escaper->escapeHtmlAttr($method->getCarrierCode() . '_' . $method->getMethodCode()) ?>"><?= /* @noEscape */ $block->fetchView($itemTemplate) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+</div>

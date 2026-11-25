@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.shipping-details">
+            <!-- Rendered by ShowPickupLocationCard through getComponentViewBlock(), never as a plain child. -->
+            <block name="checkout.shipping-details.pp-pickup"
+                   template="PixelPerfect_StorePickupHyvaCheckout::checkout/address-view/pickup-location.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <!-- Own list whenever the rate display is "label" or "groups"; "none" renders Hyvä's template. -->
+        <referenceBlock name="checkout.shipping.methods"
+                        template="PixelPerfect_StorePickupHyvaCheckout::checkout/shipping/method-list.phtml">
+            <!-- Rendered under the selected pickup rate by AddPickupMethodDetails; Hyvä's static carrier_method alias cannot match location codes. -->
+            <block name="checkout.shipping.method.pppickup" as="pppickup"
+                   template="PixelPerfect_StorePickupHyvaCheckout::checkout/shipping/method/pickup-details.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <referenceContainer name="checkout.billing-details.before">
+            <!-- Sits next to the Magewire billing component, so it follows a step change or reload, not a live pickup change. -->
+            <block name="checkout.billing-details.pp-pickup-hint" class="Magento\Framework\View\Element\Template"
+                   template="PixelPerfect_StorePickupHyvaCheckout::checkout/address-view/billing-pickup-hint.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

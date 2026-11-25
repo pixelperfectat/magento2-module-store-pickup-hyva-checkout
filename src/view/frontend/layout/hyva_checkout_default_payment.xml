@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Renders nothing unless the quote ships by pickup. Static: follows a step change or reload. -->
+        <block name="checkout.pp-pickup-banner" class="Magento\Framework\View\Element\Template"
+               template="PixelPerfect_StorePickupHyvaCheckout::checkout/pickup-banner.phtml"
+               before="checkout.billing-details.section">
+            <arguments>
+                <argument name="view_model" xsi:type="object">PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView</argument>
+            </arguments>
+        </block>
+        <move element="checkout.pp-pickup-banner" destination="column.main" before="checkout.billing-details.section"/>
+    </body>
+</page>

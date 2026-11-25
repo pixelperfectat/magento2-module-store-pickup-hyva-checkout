@@ -1,0 +1,56 @@
+<?php declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupIcon;
+use PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView;
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var PickupLocationView $view */
+
+$view = $block->getData('view_model');
+/** @var PickupIcon $pickupIcon */
+$pickupIcon = $viewModels->require(PickupIcon::class);
+$location = $view->getSelectedLocation();
+if ($location === null) {
+    return;
+}
+$telephone = (string) $location->getTelephone();
+$openingHours = trim((string) $location->getOpeningHours());
+$note = trim((string) $location->getNote());
+?>
+<?php /* Hyvä's own section title ("Shipping Address") sits outside the Magewire component, so it cannot change on a live
+         rate switch; while this card is rendered it is hidden visually only (so the fieldset keeps its accessible
+         name) and the card brings the matching visible title instead. */ ?>
+<style>#shipping-details:has(.pp-pickup-card) > legend { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }</style>
+<div class="pp-pickup-card" data-pp-pickup-location="<?= $escaper->escapeHtmlAttr($location->getCode()) ?>">
+    <div class="section-title w-full border-b border-slate-300 pb-2 mb-6">
+        <h2 class="text-slate-800 text-xl font-medium"><?= $escaper->escapeHtml(__('Pickup location')) ?></h2>
+    </div>
+    <div class="flex items-start gap-3">
+        <?= /* @noEscape */ $pickupIcon->getIconHtml('w-6 h-6 shrink-0 mt-0.5', 24, 24) ?>
+        <div class="space-y-2">
+            <address class="not-italic">
+                <strong class="block"><?= $escaper->escapeHtml($location->getName()) ?></strong>
+                <?php foreach ($view->getAddressLines($location) as $line): ?>
+                    <span class="block"><?= $escaper->escapeHtml($line) ?></span>
+                <?php endforeach; ?>
+                <?php if ($telephone !== ''): ?>
+                    <span class="block"><?= $escaper->escapeHtml($telephone) ?></span>
+                <?php endif; ?>
+            </address>
+            <?php if ($openingHours !== ''): ?>
+                <div>
+                    <strong class="block"><?= $escaper->escapeHtml(__('Opening hours')) ?></strong>
+                    <p><?= /* @noEscape */ nl2br($escaper->escapeHtml($openingHours)) ?></p>
+                </div>
+            <?php endif; ?>
+            <?php if ($note !== ''): ?>
+                <p class="text-sm"><?= $escaper->escapeHtml($note) ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

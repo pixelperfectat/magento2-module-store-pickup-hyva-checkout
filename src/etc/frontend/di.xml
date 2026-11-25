@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\Shipping\MethodList\SyncPickupAddress">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupLocationView">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Hyva\Checkout\Magewire\Checkout\Shipping\MethodList">
+        <plugin name="pp_store_pickup_sync_pickup_address"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\Shipping\MethodList\SyncPickupAddress"/>
+    </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails\KeepBillingSeparateForPickup">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Hyva\Checkout\Model\Component\AddressTypeShipping">
+        <plugin name="pp_store_pickup_show_pickup_location_card"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Model\Component\AddressTypeShipping\ShowPickupLocationCard"/>
+    </type>
+    <type name="Hyva\Checkout\Magewire\Checkout\AddressView\ShippingDetails">
+        <plugin name="pp_store_pickup_add_pickup_listener"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\AddPickupListener"/>
+    </type>
+    <type name="Hyva\Checkout\Magewire\Checkout\AddressView\BillingDetails">
+        <plugin name="pp_store_pickup_add_pickup_listener"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\AddPickupListener"/>
+        <plugin name="pp_store_pickup_keep_billing_separate"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\Magewire\Checkout\AddressView\BillingDetails\KeepBillingSeparateForPickup"/>
+    </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\AddressView\AddressViewBilling\HideBillingToggleForPickup">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Hyva\Checkout\ViewModel\Checkout\AddressView\AddressViewBilling">
+        <plugin name="pp_store_pickup_hide_billing_toggle"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\AddressView\AddressViewBilling\HideBillingToggleForPickup"/>
+    </type>
+    <type name="Hyva\Checkout\ViewModel\Checkout\Shipping\MethodList">
+        <plugin name="pp_store_pickup_add_pickup_method_details"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Shipping\MethodList\AddPickupMethodDetails"/>
+        <plugin name="pp_store_pickup_add_pickup_method_icon"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Shipping\MethodList\AddPickupMethodIcon"/>
+    </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\ViewModel\MethodListView">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\ViewModel\PickupIcon">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Shipping\MethodList\AddPickupMethodIcon">
+        <arguments>
+            <argument name="logger" xsi:type="object">PixelPerfect\StorePickup\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Hyva\Checkout\ViewModel\Checkout\Formatter">
+        <plugin name="pp_store_pickup_show_free_shipping_rates"
+                type="PixelPerfect\StorePickupHyvaCheckout\Plugin\ViewModel\Checkout\Formatter\ShowFreeShippingRates"/>
+    </type>
+</config>

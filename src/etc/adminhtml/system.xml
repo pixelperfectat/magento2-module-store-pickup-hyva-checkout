@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <!-- The section belongs to PixelPerfect_StorePickup; this module only adds its group. -->
+        <section id="pp_store_pickup">
+            <group id="hyva_checkout" translate="label" type="text" sortOrder="30"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Hyvä Checkout</label>
+                <field id="rate_display" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Pickup Rates in the Shipping Method List</label>
+                    <comment>How the pickup rates stand out from the other shipping rates. "Label" and "Groups" render this module's own shipping method list, so a theme override of Hyvä's checkout/shipping/method-list.phtml has no effect; customise this module's templates instead. "None" keeps Hyvä's own list.</comment>
+                    <source_model>PixelPerfect\StorePickupHyvaCheckout\Model\Config\Source\RateDisplay</source_model>
+                </field>
+                <field id="rate_label" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Pickup Rate Label</label>
+                    <comment>Shown above the location name of each pickup rate. Leave empty for "In-store pickup" (translated).</comment>
+                    <depends>
+                        <field id="rate_display">label</field>
+                    </depends>
+                </field>
+                <field id="group_pickup_title" translate="label comment" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Pickup Group Title</label>
+                    <comment>Leave empty for "In-store pickup" (translated).</comment>
+                    <depends>
+                        <field id="rate_display">groups</field>
+                    </depends>
+                </field>
+                <field id="group_shipping_title" translate="label comment" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Shipping Group Title</label>
+                    <comment>Leave empty for "Shipping" (translated).</comment>
+                    <depends>
+                        <field id="rate_display">groups</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

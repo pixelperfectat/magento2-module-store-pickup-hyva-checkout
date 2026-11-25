@@ -1,0 +1,25 @@
+includes:
+    # Shared level, bootstrap (bitexpert/phpstan-magento) and defaults.
+    - vendor/pixelperfectat/coding-standard/phpstan.neon
+    - phpstan-baseline.neon
+
+parameters:
+    phpVersion: 80300
+    paths:
+        - src
+    excludePaths:
+        - '*.sync-conflict-*'
+    # Hyvä Checkout is commercial and not installable in CI: analyse against a stand-in.
+    scanFiles:
+        - Test/Stubs/AddressTypeShipping.php
+        - Test/Stubs/AddressViewBilling.php
+        - Test/Stubs/BillingDetails.php
+        - Test/Stubs/Component.php
+        - Test/Stubs/CountryFactory.php
+        - Test/Stubs/Event.php
+        - Test/Stubs/Formatter.php
+        - Test/Stubs/MethodList.php
+        - Test/Stubs/ShippingDetails.php
+        - Test/Stubs/ShippingMethodMetaData.php
+        - Test/Stubs/SvgIcons.php
+        - Test/Stubs/ViewModelMethodList.php

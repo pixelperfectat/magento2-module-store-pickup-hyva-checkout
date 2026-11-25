@@ -1,0 +1,33 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Quote\Api\Data\ShippingMethodInterface;
+
+/**
+ * One group of the shipping method list (rate display "groups"): a heading and its rates.
+ * Rendered by method-list.phtml in the context of block checkout.shipping.methods, only when both groups have rates.
+ */
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var string $ppGroupCode "pickup" or "shipping" */
+/** @var string $ppGroupTitle */
+/** @var ShippingMethodInterface[] $ppGroupMethods */
+/** @var string $ppItemTemplate */
+
+$headingId = 'pp-rate-group-' . $ppGroupCode;
+?>
+<section class="pp-rate-group" data-pp-group="<?= $escaper->escapeHtmlAttr($ppGroupCode) ?>"
+         aria-labelledby="<?= $escaper->escapeHtmlAttr($headingId) ?>">
+    <h3 id="<?= $escaper->escapeHtmlAttr($headingId) ?>"
+        class="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-600">
+        <?= $escaper->escapeHtml($ppGroupTitle) ?>
+    </h3>
+    <ul class="pp-shipping-rates grid grid-cols-1 gap-2">
+        <?php foreach ($ppGroupMethods as $method): ?>
+            <?php $block->assign('ppMethod', $method) ?>
+            <li wire:key="<?= $escaper->escapeHtmlAttr($method->getCarrierCode() . '_' . $method->getMethodCode()) ?>"><?= /* @noEscape */ $block->fetchView($ppItemTemplate) ?></li>
+        <?php endforeach; ?>
+    </ul>
+</section>
