@@ -1,9 +1,13 @@
 # Changelog
 
 All notable changes to this project are documented in this file.
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.0] - 2026-11-25
 
 ### Added
 
@@ -20,3 +24,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Pickup rates recognisable in the shipping method list: a small "In-store pickup" label above the location name, or separate pickup and shipping groups. Chosen per store view in Stores > Configuration > Sales > Store Pickup > Hyvä Checkout (`label`, `groups`, or `none` for Hyvä's own list), with optional texts. In `label` and `groups` the module renders its own list (own markup, Hyvä's Magewire/Alpine contract); list, item and group templates are overridable.
 - Translations for `en_US`, `de_DE` and `it_IT`.
 - README with requirements, installation, customising, known limits and screenshots.
+
+[Unreleased]: https://github.com/pixelperfectat/magento2-module-store-pickup-hyva-checkout/compare/0.1.0...HEAD
+[0.1.0]: https://github.com/pixelperfectat/magento2-module-store-pickup-hyva-checkout/releases/tag/0.1.0
