@@ -3,7 +3,7 @@
 Hyvä Checkout companion for
 [`pixelperfectat/magento2-module-store-pickup`](https://github.com/pixelperfectat/magento2-module-store-pickup).
 It shows the chosen pickup location in place of the shipping address form, marks the pickup rates in the shipping method
-list and shows the opening hours and note under the selected pickup rate. The module is not released yet.
+list and shows the opening hours and note under the selected pickup rate.
 
 ![Pickup location card in the Hyvä Checkout shipping step](docs/screenshots/hyva-checkout-pickup-card.jpg)
 
